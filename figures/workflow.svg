@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Evidence-led plant small-RNA annotation</title>
+<desc id="desc">A genome, small-RNA libraries and external resources feed parallel miRNA, structural RNA and PHAS evidence branches. Cross-class review reconciles candidates and creates a versioned reference. Resource gaps lead to provisional evidence or targeted data collection.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#536879"/></marker></defs>
+<rect width="1600" height="900" fill="#f7f9f7"/>
+<text x="80" y="90" font-family="Arial, sans-serif" font-size="45" font-weight="700" fill="#18392e">Plant small-RNA annotation</text>
+<text x="80" y="132" font-family="Arial, sans-serif" font-size="23" fill="#536879">Evidence collection → candidate review → versioned reference</text>
+<rect x="80" y="170" width="1440" height="108" rx="17" fill="#e6eee9" stroke="#b2cabb" stroke-width="2"/>
+<text x="110" y="211" font-family="Arial, sans-serif" font-weight="700" font-size="24" fill="#18392e">Inputs</text>
+<text x="110" y="250" font-family="Arial, sans-serif" font-size="21" fill="#263f35">Versioned genome and contigs</text>
+<text x="570" y="250" font-family="Arial, sans-serif" font-size="21" fill="#263f35">Quality-controlled small-RNA libraries</text>
+<text x="1130" y="250" font-family="Arial, sans-serif" font-size="21" fill="#263f35">Available reference evidence</text>
+<path d="M315 278 V320 M800 278 V320 M1285 278 V320" stroke="#536879" stroke-width="3" marker-end="url(#arrow)"/>
+<g font-family="Arial, sans-serif">
+<rect x="80" y="325" width="450" height="220" rx="17" fill="#e8f1fc" stroke="#a9c5e1" stroke-width="2"/>
+<text x="110" y="369" font-size="27" font-weight="700" fill="#204970">miRNA</text>
+<text x="110" y="410" font-size="21" fill="#293b49">Known and de novo candidates</text>
+<text x="110" y="448" font-size="21" fill="#293b49">Genome, hairpin and read evidence</text>
+<text x="110" y="486" font-size="21" fill="#293b49">Validated or provisional models</text>
+<rect x="575" y="325" width="450" height="220" rx="17" fill="#fff2de" stroke="#ddc38e" stroke-width="2"/>
+<text x="605" y="369" font-size="27" font-weight="700" fill="#765322">Structural RNAs</text>
+<text x="605" y="410" font-size="21" fill="#493e2c">tRNA prediction and review</text>
+<text x="605" y="448" font-size="21" fill="#493e2c">rRNA / snRNA / snoRNA evidence</text>
+<text x="605" y="486" font-size="21" fill="#493e2c">Genomic and mature sequences</text>
+<rect x="1070" y="325" width="450" height="220" rx="17" fill="#f2eafa" stroke="#c5abd9" stroke-width="2"/>
+<text x="1100" y="369" font-size="27" font-weight="700" fill="#60417c">PHAS / phasiRNA</text>
+<text x="1100" y="410" font-size="21" fill="#40354b">Individual and pooled discovery</text>
+<text x="1100" y="448" font-size="21" fill="#40354b">Register and locus review</text>
+<text x="1100" y="486" font-size="21" fill="#40354b">Supported products or locus only</text>
+</g>
+<path d="M305 545 V585 H800 M1295 545 V585 H800 M800 545 V605" stroke="#536879" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="280" y="610" width="1040" height="90" rx="17" fill="#e1eee8" stroke="#99bea8" stroke-width="2"/>
+<text x="800" y="649" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#18392e">Cross-class reconciliation and evidence review</text>
+<text x="800" y="681" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" fill="#39564a">Coordinates • shared sequences • ambiguity • decisions and exclusions</text>
+<path d="M800 700 V735" stroke="#536879" stroke-width="3" marker-end="url(#arrow)"/>
+<rect x="280" y="740" width="1040" height="92" rx="17" fill="#244e3e"/>
+<text x="800" y="779" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#fff">Versioned annotation and evidence package</text>
+<text x="800" y="811" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" fill="#e0eee6">GFF3 • FASTA • product and equivalence tables • provenance • QC</text>
+<text x="80" y="875" font-family="Arial, sans-serif" font-size="19" fill="#536879">Resource gaps → targeted data collection or clearly labelled provisional evidence</text>
+</svg>
