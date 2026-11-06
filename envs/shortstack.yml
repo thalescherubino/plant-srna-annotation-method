@@ -1,0 +1,6 @@
+name: plant-srna-shortstack
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - shortstack>=4.1.0

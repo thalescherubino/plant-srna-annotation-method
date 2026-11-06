@@ -18,7 +18,7 @@ An AI agent or analyst should first inventory the actual assembly, public databa
 
 ## Scope and interpretation
 
-The recommended discovery and evaluation path is [miRador](https://github.com/rkweku/miRador) for de novo miRNA candidates, then [miRScore](https://github.com/Aez35/miRScore) for computational evaluation using mature/precursor sequences and individual small-RNA libraries. Use [Phasis](https://github.com/blakemeyerslab/Phasis) **2.8.4 or newer** for new *PHAS* discovery; optional ShortStack comparison provides complementary evidence.
+Use [miRador](https://github.com/rkweku/miRador) **and** [ShortStack](https://github.com/MikeAxtell/ShortStack) **4.1.0 or newer** to generate plant miRNA candidates, then [miRScore](https://github.com/Aez35/miRScore) to evaluate suitable candidate mature/precursor models using individual small-RNA libraries. Enable ShortStack's de novo miRNA search with `--dn_mirna`; do not use `--nohp`. Use [Phasis](https://github.com/blakemeyerslab/Phasis) **2.8.4 or newer** for *PHAS* and *PHAS*-like locus discovery and classification. Use [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) for tRNAs and [Infernal](https://github.com/EddyRivasLab/infernal) with [Rfam](https://rfam.org/) models, [RNAcentral](https://rnacentral.org/) and genomic support for snRNAs, snoRNAs and rRNAs.
 
 The workflow distinguishes computationally supported and provisional *MIR* models, structural RNA classes, phased loci, and register-supported phasiRNA products. A genomic interval enriched in a particular read length is not by itself a *PHAS* locus, and reads inside a *PHAS* interval are not automatically phasiRNAs. Identical sequences may arise from multiple loci or classes; retain that ambiguity instead of duplicating abundance.
 

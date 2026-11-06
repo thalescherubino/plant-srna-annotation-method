@@ -14,18 +14,18 @@
 <g font-family="Arial, sans-serif">
 <rect x="80" y="325" width="450" height="220" rx="17" fill="#e8f1fc" stroke="#a9c5e1" stroke-width="2"/>
 <text x="110" y="369" font-size="27" font-weight="700" fill="#204970">miRNA</text>
-<text x="110" y="410" font-size="21" fill="#293b49">Known and de novo candidates</text>
-<text x="110" y="448" font-size="21" fill="#293b49">Genome, hairpin and read evidence</text>
-<text x="110" y="486" font-size="21" fill="#293b49">Validated or provisional models</text>
+<text x="110" y="410" font-size="21" fill="#293b49">miRador + ShortStack 4.1+</text>
+<text x="110" y="448" font-size="21" fill="#293b49">miRScore and evidence review</text>
+<text x="110" y="486" font-size="21" fill="#293b49">Supported or provisional models</text>
 <rect x="575" y="325" width="450" height="220" rx="17" fill="#fff2de" stroke="#ddc38e" stroke-width="2"/>
 <text x="605" y="369" font-size="27" font-weight="700" fill="#765322">Structural RNAs</text>
-<text x="605" y="410" font-size="21" fill="#493e2c">tRNA prediction and review</text>
-<text x="605" y="448" font-size="21" fill="#493e2c">rRNA / snRNA / snoRNA evidence</text>
-<text x="605" y="486" font-size="21" fill="#493e2c">Genomic and mature sequences</text>
+<text x="605" y="410" font-size="21" fill="#493e2c">tRNAscan-SE for tRNAs</text>
+<text x="605" y="448" font-size="21" fill="#493e2c">Rfam / Infernal + genome mapping</text>
+<text x="605" y="486" font-size="21" fill="#493e2c">snRNA / snoRNA / rRNA review</text>
 <rect x="1070" y="325" width="450" height="220" rx="17" fill="#f2eafa" stroke="#c5abd9" stroke-width="2"/>
 <text x="1100" y="369" font-size="27" font-weight="700" fill="#60417c"><tspan font-style="italic">PHAS</tspan> / phasiRNA</text>
-<text x="1100" y="410" font-size="21" fill="#40354b">Individual and pooled discovery</text>
-<text x="1100" y="448" font-size="21" fill="#40354b">Register and locus review</text>
+<text x="1100" y="410" font-size="21" fill="#40354b">Phasis 2.8.4+ discovery</text>
+<text x="1100" y="448" font-size="21" fill="#40354b"><tspan font-style="italic">PHAS</tspan>-like and register review</text>
 <text x="1100" y="486" font-size="21" fill="#40354b">Supported products or locus only</text>
 </g>
 <path d="M305 545 V585 H800 M1295 545 V585 H800 M800 545 V605" stroke="#536879" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
