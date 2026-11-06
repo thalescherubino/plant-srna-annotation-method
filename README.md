@@ -11,14 +11,16 @@ The vector figure can be downloaded and used in presentations. Its [accessible t
 1. Read the [general workflow and evidence policies](docs/workflow.md).
 2. Follow the [software setup guide](docs/setup.md) for miRador, miRScore, Phasis and structural-RNA tools.
 3. Use the [resource decision guide](docs/resource_decisions.md) to plan species-specific data collection and identify missing evidence.
-4. Consult the [B73v5 case study](case_studies/b73v5/README.md) for the documented tools, versions, policies, and historical scripts.
-5. Review the [release checklist](docs/release_checklist.md) before sharing an annotation.
+4. Consult the [B73v5 case study](case_studies/b73v5/README.md) for the documented tools, versions, policies, and historical scripts, and the [rice Nipponbare case study](case_studies/rice_nipponbare/README.md), which is in progress.
+5. Use the [reusable scripts](scripts/README.md) for public-library curation, genome-wide structural RNA prediction and mapping QC.
+6. Check the [decision log](docs/decisions.md) for dated project decisions and their reasons.
+7. Review the [release checklist](docs/release_checklist.md) before sharing an annotation.
 
 An AI agent or analyst should first inventory the actual assembly, public databases, annotation sources, and available small-RNA libraries for the target species. Evidence availability determines which branches can be completed. Record failed searches and limitations; do not treat a lack of a database hit as proof that a feature is absent.
 
 ## Scope and interpretation
 
-Use [miRador](https://github.com/rkweku/miRador) **and** [ShortStack](https://github.com/MikeAxtell/ShortStack) **4.1.0 or newer** to generate plant miRNA candidates, then [miRScore](https://github.com/Aez35/miRScore) to evaluate suitable candidate mature/precursor models using individual small-RNA libraries. Enable ShortStack's de novo miRNA search with `--dn_mirna`; do not use `--nohp`. Use [Phasis](https://github.com/blakemeyerslab/Phasis) **2.8.4 or newer** for *PHAS* and *PHAS*-like locus discovery and classification. Use [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) for tRNAs and [Infernal](https://github.com/EddyRivasLab/infernal) with [Rfam](https://rfam.org/) models, [RNAcentral](https://rnacentral.org/) and genomic support for snRNAs, snoRNAs and rRNAs.
+Use [miRador](https://github.com/rkweku/miRador) **and** [ShortStack](https://github.com/MikeAxtell/ShortStack) **4.1.0 or newer** to generate plant miRNA candidates, then [miRScore](https://github.com/Aez35/miRScore) to evaluate suitable candidate mature/precursor models using individual small-RNA libraries. Enable ShortStack's de novo miRNA search with `--dn_mirna`; do not use `--nohp`. Use [Phasis](https://github.com/blakemeyerslab/Phasis) **2.8.4 or newer** for *PHAS* and *PHAS*-like locus discovery and classification. Phasis alone performs the phasing analysis; ShortStack 4 has no phasing scores. For structural RNAs, predict genome-wide first, with [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) for tRNAs and a genome-wide [Infernal](https://github.com/EddyRivasLab/infernal) scan with the [Rfam](https://rfam.org/) structural subset for snRNAs, snoRNAs and rRNAs. Then compare with [RNAcentral](https://rnacentral.org/) records.
 
 The workflow distinguishes computationally supported and provisional *MIR* models, structural RNA classes, phased loci, and register-supported phasiRNA products. A genomic interval enriched in a particular read length is not by itself a *PHAS* locus, and reads inside a *PHAS* interval are not automatically phasiRNAs. Identical sequences may arise from multiple loci or classes; retain that ambiguity instead of duplicating abundance.
 
@@ -26,4 +28,4 @@ Release the genomic annotation, sequence references, evidence tables, and exclus
 
 ## Status
 
-The scripts in the case study are historical maize-specific implementations. They are provided as auditable examples, not advertised as species-independent tools. Their input data are not bundled. Consult the original software licenses and source-data terms before redistributing dependencies or reference files.
+The scripts in `case_studies/b73v5/scripts/` are historical maize-specific implementations, provided as auditable examples rather than species-independent tools. The scripts in `scripts/` are reusable components developed while extending the method to rice; together they are still not an end-to-end automated pipeline. Their input data are not bundled. Consult the original software licenses and source-data terms before redistributing dependencies or reference files.
