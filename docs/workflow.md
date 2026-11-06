@@ -8,7 +8,7 @@ Choose a versioned genome assembly; record accession, provider, release, checksu
 
 ### miRNA
 
-Collect species-specific mature and precursor annotations where available, track IDs and versions, and generate de novo candidates when appropriate. Project candidate precursors onto the selected assembly, check strand and allele compatibility, remap product arms, and evaluate hairpin and library-derived evidence using a suitable plant miRNA validation framework. In the maize case miRScore 0.3.7 evaluated reference and de novo candidates, including repaired genomic models. Merge overlapping same-strand models only under a documented locus rule; keep distinct loci that share a product sequence. Failed or untestable candidates remain exploratory, with reasons.
+Collect species-specific mature and precursor annotations where available and track IDs and versions. Use [miRador](https://github.com/rkweku/miRador) to generate de novo plant miRNA candidates from a genome and suitable small-RNA libraries. Project candidate precursors onto the selected assembly, check strand and allele compatibility, and remap product arms. Prepare matching mature and precursor FASTAs and evaluate candidate models using [miRScore](https://github.com/Aez35/miRScore) in plant mode with separate, quality-controlled libraries. Inspect pass/fail flags, mature/star support, duplex structure and library-level evidence; carefully review rescue suggestions. Passing computational criteria supports an annotation but does not by itself establish experimental validation or target function. In the maize case miRScore 0.3.7 evaluated reference and de novo candidates, including repaired genomic models. Merge overlapping same-strand models only under a documented locus rule; keep distinct loci that share a product sequence. Failed or untestable candidates remain exploratory, with reasons. See [setup](setup.md) for environment and input preparation.
 
 ### Structural RNA
 
@@ -16,7 +16,7 @@ Predict tRNAs in the genome and review pseudogenes. Compile available rRNA, snRN
 
 ### Phased small RNAs
 
-Process suitable small-RNA libraries consistently. Discover phased candidates separately by library and by pooling for chosen phase lengths; pooled discovery does not replace biological replicates. Pin tool version, mapping policy, phase, thresholds and command. Compare complementary callers only after auditing assembly, inputs, multimapping, boundaries, scores and criteria. Review candidate registers, length, complexity, strand, repeats, locus architecture and library support. Do not infer false negatives simply from unequal call counts. Retain phased products only where a tool or validated procedure supplies locus, strand, register and product evidence. Keep locus-only additions locus-only.
+Process suitable small-RNA libraries consistently. For new *PHAS* discovery use [Phasis](https://github.com/blakemeyerslab/Phasis) **version 2.8.4 or newer**, running individual-library and, where appropriate, pooled candidate discovery for chosen phase lengths; pooled discovery does not replace biological replicates. Pin tool version, commit, mapping policy, phase, thresholds and command. [ShortStack](https://github.com/MikeAxtell/ShortStack) is an optional complementary comparator: audit assembly, inputs, multimapping, boundaries, scores and criteria before comparing callers. Review candidate registers, length, complexity, strand, repeats, locus architecture and library support. Do not infer false negatives simply from unequal call counts. Retain phased products only where a tool or validated procedure supplies locus, strand, register and product evidence. Keep locus-only additions locus-only.
 
 ## 3. Reconcile and review
 
@@ -28,4 +28,4 @@ Create per-class and unified genomic GFF3; class-specific genomic and mature seq
 
 ## Figure description
 
-The diagram starts with a genome, small-RNA libraries and external resources. Three parallel branches generate miRNA, structural-RNA and PHAS evidence. They feed joint cross-class review, which can send ambiguous candidates back for further evidence. The final branch produces a versioned annotation and evidence package. A resource-gap decision applies across the three discovery branches and can yield explicitly provisional outputs.
+The diagram starts with a genome, small-RNA libraries and external resources. Three parallel branches generate miRNA, structural-RNA and *PHAS* evidence. They feed joint cross-class review, which can send ambiguous candidates back for further evidence. The final branch produces a versioned annotation and evidence package. A resource-gap decision applies across the three discovery branches and can yield explicitly provisional outputs.

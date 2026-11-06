@@ -9,15 +9,18 @@ The vector figure can be downloaded and used in presentations. Its [accessible t
 ## Start here
 
 1. Read the [general workflow and evidence policies](docs/workflow.md).
-2. Use the [resource decision guide](docs/resource_decisions.md) to plan species-specific data collection and identify missing evidence.
-3. Consult the [B73v5 case study](case_studies/b73v5/README.md) for the documented tools, versions, policies, and historical scripts.
-4. Review the [release checklist](docs/release_checklist.md) before sharing an annotation.
+2. Follow the [software setup guide](docs/setup.md) for miRador, miRScore, Phasis and structural-RNA tools.
+3. Use the [resource decision guide](docs/resource_decisions.md) to plan species-specific data collection and identify missing evidence.
+4. Consult the [B73v5 case study](case_studies/b73v5/README.md) for the documented tools, versions, policies, and historical scripts.
+5. Review the [release checklist](docs/release_checklist.md) before sharing an annotation.
 
 An AI agent or analyst should first inventory the actual assembly, public databases, annotation sources, and available small-RNA libraries for the target species. Evidence availability determines which branches can be completed. Record failed searches and limitations; do not treat a lack of a database hit as proof that a feature is absent.
 
 ## Scope and interpretation
 
-The workflow distinguishes validated and provisional *MIR* models, structural RNA classes, phased loci, and register-supported phasiRNA products. A genomic interval enriched in a particular read length is not by itself a PHAS locus, and reads inside a PHAS interval are not automatically phasiRNAs. Identical sequences may arise from multiple loci or classes; retain that ambiguity instead of duplicating abundance.
+The recommended discovery and evaluation path is [miRador](https://github.com/rkweku/miRador) for de novo miRNA candidates, then [miRScore](https://github.com/Aez35/miRScore) for computational evaluation using mature/precursor sequences and individual small-RNA libraries. Use [Phasis](https://github.com/blakemeyerslab/Phasis) **2.8.4 or newer** for new *PHAS* discovery; optional ShortStack comparison provides complementary evidence.
+
+The workflow distinguishes computationally supported and provisional *MIR* models, structural RNA classes, phased loci, and register-supported phasiRNA products. A genomic interval enriched in a particular read length is not by itself a *PHAS* locus, and reads inside a *PHAS* interval are not automatically phasiRNAs. Identical sequences may arise from multiple loci or classes; retain that ambiguity instead of duplicating abundance.
 
 Release the genomic annotation, sequence references, evidence tables, and exclusion decisions together. Genomic sequence and mature-product sequence can differ, such as post-transcriptional tRNA CCA addition; keep their intended uses explicit. Analysis of differential abundance is a separate downstream task.
 

@@ -1,0 +1,6 @@
+name: plant-srna-mirscore
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - mirscore=0.3.7

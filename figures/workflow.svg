@@ -23,7 +23,7 @@
 <text x="605" y="448" font-size="21" fill="#493e2c">rRNA / snRNA / snoRNA evidence</text>
 <text x="605" y="486" font-size="21" fill="#493e2c">Genomic and mature sequences</text>
 <rect x="1070" y="325" width="450" height="220" rx="17" fill="#f2eafa" stroke="#c5abd9" stroke-width="2"/>
-<text x="1100" y="369" font-size="27" font-weight="700" fill="#60417c">PHAS / phasiRNA</text>
+<text x="1100" y="369" font-size="27" font-weight="700" fill="#60417c"><tspan font-style="italic">PHAS</tspan> / phasiRNA</text>
 <text x="1100" y="410" font-size="21" fill="#40354b">Individual and pooled discovery</text>
 <text x="1100" y="448" font-size="21" fill="#40354b">Register and locus review</text>
 <text x="1100" y="486" font-size="21" fill="#40354b">Supported products or locus only</text>

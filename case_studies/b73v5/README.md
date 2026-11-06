@@ -6,10 +6,10 @@ The documented reference used `Zm-B73-REFERENCE-NAM-5.0`. The assembly FASTA SHA
 | --- | --- |
 | miRNA | miRBase v23, the miRScore study's de novo candidate set and expanded MIR2275 candidates; plant-mode miRScore 0.3.7, commit `64c3abfe93157a849506fe49c78cddb401e7ac05`; exact and repaired precursor models reviewed and passing models merged by same-strand precursor overlap. |
 | Structural RNAs | RNAcentral v27 candidates, Rfam covariance models, Infernal 1.1.4 and tRNAscan-SE 2.0.13; selected candidates required exact full-length B73 genomic support plus class/family support; tRNA pseudogenes excluded; separate genomic and CCA-aware tRNA references. |
-| PHAS | 49 quality-controlled 18–30-nt tag libraries; Phasis 2.8.3 commit `00fb8c0e6cf9c332a2720cf0d31f540cccc35331`, individual and pooled 21/24-nt discovery, with ShortStack 3.8.5 comparison and manual review. Exact mapping, maxhits 25 and minimum Howell score 12.5 were case settings, not general defaults. |
-| Reconciliation | MIR precedence over overlapping PHAS; specific exact structural-RNA containment exclusions; maximum Peak Howell score for overlapping cross-phase calls. All are release-specific decisions preserved in an exclusion ledger. |
+| *PHAS* | 49 quality-controlled 18–30-nt tag libraries; Phasis 2.8.3 commit `00fb8c0e6cf9c332a2720cf0d31f540cccc35331`, individual and pooled 21/24-nt discovery, with ShortStack 3.8.5 comparison and manual review. Exact mapping, maxhits 25 and minimum Howell score 12.5 were case settings, not general defaults. |
+| Reconciliation | MIR precedence over overlapping *PHAS*; specific exact structural-RNA containment exclusions; maximum Peak Howell score for overlapping cross-phase calls. All are release-specific decisions preserved in an exclusion ledger. |
 
-The released resource reported 220 bona-fide MIR loci, 439 21-PHAS and 452 24-PHAS loci, plus structural RNA classes and explicitly exploratory candidate sets. Some accepted PHAS additions were locus-only; no phasiRNA products were invented for them. Counts reflect this particular release and are not expectations for another genome.
+The released resource reported 220 bona-fide MIR loci, 439 21-*PHAS* and 452 24-*PHAS* loci, plus structural RNA classes and explicitly exploratory candidate sets. Some accepted *PHAS* additions were locus-only; no phasiRNA products were invented for them. Counts reflect this particular release and are not expectations for another genome. The historical 2.8.3 version is retained here for provenance; new discovery in this method requires Phasis 2.8.4 or newer.
 
 ## Historical implementation
 

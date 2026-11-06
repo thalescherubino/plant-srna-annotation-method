@@ -1,0 +1,7 @@
+name: plant-srna-structural
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - trnascan-se=2.0.13
+  - infernal=1.1.4
