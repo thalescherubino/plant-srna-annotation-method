@@ -1,0 +1,16 @@
+# Pip-resolved Phasis runtime dependencies tested on 2026-11-05 (Linux x86_64, glibc 2.34,
+# Python 3.12.16, Phasis 2.8.4 commit 90a3a0c; 229 tests passed, 48 BAM-importer tests skipped).
+# Phasis pins numpy and scikit-learn but not pandas/matplotlib/seaborn/tqdm; use:
+#   python -m pip install -e . -c /path/to/plant-srna-annotation-method/envs/phasis.pip-constraints.txt
+contourpy==1.3.3
+cycler==0.12.1
+fonttools==4.68.0
+kiwisolver==1.5.1
+matplotlib==3.11.2
+pandas==3.0.6
+pillow==13.0.0
+pyparsing==3.3.3
+python-dateutil==4.0.0
+seaborn==0.13.2
+tqdm==4.70.1
+tzdata==2026.6

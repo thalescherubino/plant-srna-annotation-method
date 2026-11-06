@@ -1,6 +1,8 @@
 # Software setup and first-use guide
 
-Use separate environments: miRador has older dependencies, while current Phasis has its own tested Python stack. This guide gives a starting configuration, not a cross-platform lockfile; channel availability and compatibility can change. Use Linux or macOS supported by the tools, install a Conda-compatible package manager, and execute installations and analyses under your institution's computing policies. Do not install into an existing shared or production environment. A computer with sufficient storage and memory is needed for genomes, indexes and libraries.
+Use separate environments: each tool has its own tested dependency stack (upstream miRador targets Python 3.7; see section 2 for the Python 3.12 port used here). This guide gives a starting configuration, not a cross-platform lockfile; channel availability and compatibility can change. Use Linux or macOS supported by the tools, install a Conda-compatible package manager, and execute installations and analyses under your institution's computing policies. Do not install into an existing shared or production environment. A computer with sufficient storage and memory is needed for genomes, indexes and libraries.
+
+On a shared server, install a private Miniforge in a writable work directory (for example `bash Miniforge3-<version>-Linux-x86_64.sh -b -p /workdir/$USER/conda`), put `channels`, `channel_priority: strict`, `pkgs_dirs` and `envs_dirs` in that prefix's own `.condarc`, and avoid `conda init` and system-wide installations. Verify the installer checksum and record its version. Some clusters set `OMP_NUM_THREADS=1`, which makes `nproc` report one CPU; check the real allocation (for example `taskset -cp $$`) and the current load before choosing thread counts. A tested configuration is recorded in [platform tests](platform_tests/biohpc_2026-11-05.md).
 
 The commands below assume you are in a clone of this methods repository. They create five named environments; check for existing names first with `conda env list` to avoid modifying someone else's environment. `conda activate` requires a configured Conda shell. On shared systems select writable environment and package-cache locations according to local policy. Record the final dependency list and platform; do not assume an environment solve that works on one system is portable to another.
 
@@ -14,7 +16,7 @@ conda activate plant-srna-phasis
 git clone https://github.com/blakemeyerslab/Phasis.git
 cd Phasis
 git rev-parse HEAD
-python -m pip install -e .
+python -m pip install -e . -c ../envs/phasis.pip-constraints.txt
 phasis -version
 phasis -h
 python -m pip check
@@ -22,6 +24,8 @@ hisat2 --version
 samtools --version
 python -c "from phasis.deps_check import require_dependencies; require_dependencies()"
 ```
+
+Phasis pins NumPy and scikit-learn but not pandas, matplotlib, seaborn or tqdm, so an unconstrained pip install picks whatever is newest (pandas 3.x as of November 2026). `envs/phasis.pip-constraints.txt` fixes the versions tested with Phasis 2.8.4 commit `90a3a0c`. The relative path assumes the Phasis checkout sits inside this repository clone; otherwise give its absolute path. Optionally run the upstream test suite (`python -m pip install pytest`, then `python -m pytest -q tests` from the Phasis checkout). Tests of the optional BAM importer are skipped unless `phasis[bam]` is installed; that is expected for FASTA/FASTQ/tag-count input.
 
 Confirm the reported version is at least 2.8.4 **before** discovery, and record the version and `git rev-parse HEAD` with the analysis. A moving `main` is not a fixed release: after verifying compatibility, preserve the commit and environment export for the study. Editable installation uses this checkout, so keep it unchanged and available. Return to the methods repository before running the remaining setup commands. Check the [upstream instructions](https://github.com/blakemeyerslab/Phasis#installation) for updated dependencies and troubleshooting.
 
@@ -44,17 +48,29 @@ Confirm that the glob includes exactly the intended libraries; tag counts must r
 
 ## 2. miRador: de novo miRNA prediction
 
-[miRador](https://github.com/rkweku/miRador) predicts plant miRNA candidates from a genome and small-RNA data. Use the tool's own environment in a **separate shell/environment** from Phasis and miRScore:
+[miRador](https://github.com/rkweku/miRador) predicts plant miRNA candidates from a genome and small-RNA data. Use it in a **separate shell/environment** from Phasis and miRScore.
+
+The upstream `environment.yml` (commit `c68c1536`, May 2024) pins Python 3.7 and pulls from Anaconda's `defaults` channel, whose terms of service may restrict institutional use. The upstream README's fallback recipe avoids `defaults` but pins `python=3.7.13`, which exists only on `defaults`. This method instead uses a small Python 3.12 port of miRador with `envs/mirador.yml` (conda-forge and bioconda only). The port makes three changes:
+
+- `Bio.pairwise2` (deprecated) is replaced by `Bio.Align.PairwiseAligner` with identical scoring: match 1, mismatch 0, gap open/extend −1, end gaps penalized. Scores matched on 20,000 test pairs.
+- The removed `PyPDF2.PdfFileMerger`/`PdfFileReader` are replaced by `pypdf.PdfWriter`, and plot pages are merged in sorted order.
+- `samtools faidx` is waited for and its exit status checked.
+
+On the bundled Arabidopsis chr1 test, the port reproduced the upstream Python 3.7 candidate, precursor and per-library outputs byte-for-byte.
 
 ```bash
 conda deactivate
+conda env create -f envs/mirador.yml
 git clone --recursive https://github.com/rkweku/miRador.git
 cd miRador
+git checkout c68c1536ce272f49d7803044e1120b7e3cc23345
+# apply the documented Python 3.12 port (fork/branch or patch recorded with the study)
 git rev-parse HEAD
 git submodule status --recursive
-conda env create -n plant-srna-mirador -f environment.yml
 conda activate plant-srna-mirador
 ```
+
+Run the bundled test before real data. Unzipping the test data and writing output both modify the working tree, so run it in a copy, for example `git archive HEAD | tar -x -C /path/to/mirador_test`, then `gunzip -r test` and `python3 miRador miRador.ini` in that directory. `samtools faidx` is called by name from `PATH`, not through `samtoolsPath` in `miRador.ini`, so keep the environment active. With `version = CURRENT`, the test used miRador's bundled miRBase 22.1 files; record the miRBase release used in every study.
 
 Follow the [miRador configuration and usage instructions](https://github.com/rkweku/miRador#configuration) to set the genome, prepared libraries, organism and output directory in a study-specific `miRador.ini`. Its documented library inputs include chopped/tag files; check format and preserve read abundance. Use a new output directory: the upstream documentation warns that existing output may be overwritten. Save the configuration, version/commit, library manifest, commands and candidate outputs. Validate the environment with the upstream test or example before a full study. If the older dependency stack cannot be solved on your platform, document the failure and use an upstream-supported installation or separately justified predictor rather than silently claiming miRador was run. Return to the methods repository for the next section.
 
