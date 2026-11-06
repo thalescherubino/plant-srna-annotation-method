@@ -15,6 +15,16 @@ The released resource reported 220 bona-fide MIR loci, 439 21-*PHAS* and 452 24-
 
 The [scripts](scripts/) are copies of five local case-specific builders used or associated with curation and release. The unified GFF3 builder is directly named in the release manifest. For the other scripts, association with this release needs individual command/log verification; their presence alone is not proof of execution. The source release manifest records input checksums but does not establish a build-time checksum for every script. These copies reflect the recovered local versions, not verified immutable executed binaries. They assume B73-specific inputs, coordinate conventions and decisions; they are not a ready-to-run pipeline for other species.
 
+## Post-release work (Version 1 unchanged; Version 2 in progress)
+
+| Date | Work | Record |
+|---|---|---|
+| 2026-11-05 | Feature-ID-aware validation of all 87,606 v1 GFF3 features against the local MaizeGDB genome. All passed. The phasiRNA reference-forward convention was confirmed from Phasis source (commit `00fb8c0`). | [`validation_2026-11-05/`](validation_2026-11-05/) |
+| 2026-11-05 | tRNA mature-sequence patch: 37 intron-containing tRNA features (35 sequences) spliced into 5 mature CCA-aware sequences; 13 low-score features held for review. | [`trna_spliced_patch_2026-11-05/`](trna_spliced_patch_2026-11-05/) |
+| 2026-11-06 | **Version 2 decided.** Structural RNAs re-predicted genome-wide (tRNAscan-SE + Rfam 15.1 structural-subset `cmscan`) and compared with the v1 RNAcentral-based placements under the new policy. v2 absorbs the tRNA patch. Planned outputs include a v1→v2 change ledger. | [`v2/`](v2/) |
+
+The local genome FASTA's SHA-256 (`52f06632…`) differs from the value in the source report. All coordinate-bearing features agree with it, so the two are taken to be the same assembly with different headers or formatting.
+
 ## Sources
 
 - B73 assembly: [Hufford et al. 2021](https://doi.org/10.1126/science.abg5289).

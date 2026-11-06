@@ -1,0 +1,9 @@
+fasta	records	unique_sequences	records_referenced_by_GFF_features	unreferenced_records	unreferenced_examples
+21_PHAS.phasiRNAs.fa	29121	29121	29121	0	
+24_PHAS.phasiRNAs.fa	26076	26076	26076	0	
+miRNA_bona_fide.mature_and_star.fa	509	282	509	0	
+miRNA_bona_fide.precursors.fa	220	173	220	0	
+tRNA.genomic.fa	881	881	881	0	
+rRNA.fa	1078	1078	1078	0	
+snRNA.fa	478	478	478	0	
+snoRNA.fa	688	688	688	0	

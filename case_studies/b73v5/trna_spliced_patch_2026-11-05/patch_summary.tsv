@@ -1,0 +1,18 @@
+metric	value
+v1_genomic_reference_sequences	881
+v1_CCA_aware_records	881
+multi_exon_tRNA_features	50
+multi_exon_reference_sequences	39
+reference_sequences_spliced	35
+features_spliced	37
+reference_sequences_held_for_review	4
+features_held_for_review	13
+distinct_spliced_mature_sequences	5
+patched_CCA_aware_records	851
+min_score_threshold	50.0
+splice_all	False
+input_sha256:combined.gff3	f89c85abb172b16211df91094c1481823cc6a917c259260cf230a57bfd6766bf
+input_sha256:tRNA.genomic.fa	9e3622cfffa83451fbee0c110c80e489eb8064d9228646cf761563a5675c1b69
+input_sha256:tRNA.CCA_aware_quantification.fa	a87720496461676d93ddc390e4e954b2dcd478d34b8e6654f28ae3c081e05bd5
+output_sha256:tRNA.CCA_aware_quantification.spliced.fa	8768005b9d7226e25680edbf3149391b77a34b40316aa973afc4198f3fc1793b
+command	scripts/build_tRNA_spliced_patch.py --release /workdir/thc47/B73v5_curated_sRNA_reference_v1_2026-08-27 --genome /workdir/thc47/gff_validation_2026-11-05/genome/Zm-B73-REFERENCE-NAM-5.0.fa --outdir .

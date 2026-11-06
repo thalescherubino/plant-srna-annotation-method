@@ -1,0 +1,29 @@
+group	length_nt	n_libraries	median_pct_mapped	q1_pct	q3_pct
+Nipponbare (reference cultivar)	18	14	83.32	81.35	84.9
+Nipponbare (reference cultivar)	19	14	86.89	79.88	88.09
+Nipponbare (reference cultivar)	20	14	90.37	81.27	92.64
+Nipponbare (reference cultivar)	21	14	95.11	90.21	95.68
+Nipponbare (reference cultivar)	22	14	83.03	75.26	85.96
+Nipponbare (reference cultivar)	23	14	86.66	85.31	89.17
+Nipponbare (reference cultivar)	24	14	94.3	93.8	94.46
+Other japonica	18	37	85.14	81.71	88.11
+Other japonica	19	37	83.1	77.58	86.72
+Other japonica	20	37	84.85	78.69	87.48
+Other japonica	21	37	91.93	89.41	93.81
+Other japonica	22	37	86.62	81.58	88.38
+Other japonica	23	37	88.11	86.41	89.07
+Other japonica	24	37	91.97	89.79	93.44
+Indica / aus	18	36	80.02	75.16	87.11
+Indica / aus	19	42	81.43	72.54	88.42
+Indica / aus	20	42	81.91	72.7	89.44
+Indica / aus	21	42	85.78	77.03	89.18
+Indica / aus	22	42	81.34	72.67	87.92
+Indica / aus	23	42	80.95	71.88	84.32
+Indica / aus	24	42	70.05	66.83	74.95
+Cultivar not recorded	18	7	85.01	84.04	86.81
+Cultivar not recorded	19	7	84.71	84.11	86.66
+Cultivar not recorded	20	7	85.11	84.37	87.63
+Cultivar not recorded	21	7	85.28	82.35	86.43
+Cultivar not recorded	22	7	84.39	79.59	84.56
+Cultivar not recorded	23	7	85.58	80.41	87.06
+Cultivar not recorded	24	7	68.3	68.06	80.55

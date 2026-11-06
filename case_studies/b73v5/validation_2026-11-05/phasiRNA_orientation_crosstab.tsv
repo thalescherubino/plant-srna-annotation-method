@@ -1,0 +1,5 @@
+class	gff_strand	genome_match_orientation	count
+21-PHAS_phasiRNA	+	reference_forward	15280
+21-PHAS_phasiRNA	-	reference_forward	15512
+24-PHAS_phasiRNA	+	reference_forward	14549
+24-PHAS_phasiRNA	-	reference_forward	12782

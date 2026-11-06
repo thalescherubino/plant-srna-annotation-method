@@ -1,0 +1,13 @@
+path	sha256	bytes	source_url	downloaded
+rfam_15.1/family.txt.gz	5662343d24b6f8dab566977fabebeb9df4bbec47fb8991400749fc642f03df69	378804	https://ftp.ebi.ac.uk/pub/databases/Rfam/15.1/	2026-11-06
+rfam_15.1/README	3644c076ee3420a6b37bd8f7b8759dff408eea64067e4973ac5e0d54ec72a807	17470	https://ftp.ebi.ac.uk/pub/databases/Rfam/15.1/	2026-11-06
+rfam_15.1/Rfam.clanin	8055b3aec9be36004663b7b7643ea128b906e6c9656266189afd30fc0da34a1d	5778	https://ftp.ebi.ac.uk/pub/databases/Rfam/15.1/	2026-11-06
+rfam_15.1/Rfam.cm.gz	e2e636e9ce138dae506769aa74d067ce35466e94002818cfe125ea2a3cab8168	45753387	https://ftp.ebi.ac.uk/pub/databases/Rfam/15.1/	2026-11-06
+rnacentral_28/oryza_sativa.fasta.gz	9b5430dc11d43f9c70b28460e3b8b15686b973999f6e0cfc1a02a4e51aa51c0f	9942462	https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/ (release 28, 2026-10-07)	2026-11-06
+rnacentral_28/oryza_sativa.IRGSP-1.0.gff3.gz	2c2abc5973426efb8c1474d75fcb12886ee9e7b8e86203662d54d6f7d7cfb00a	770235	https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/ (release 28, 2026-10-07)	2026-11-06
+rnacentral_28/oryza_sativa_japonica_group.fasta.gz	9b99948d651804e226db7aac4b89c3812fb482ef554db390245ec6846689ba6c	1394353	https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/ (release 28, 2026-10-07)	2026-11-06
+rnacentral_28/release_notes.txt	05ede0efce05cd9cd76af8992db132a13b6d4ea182e2a34fd2be302c65f31f4d	727	https://ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/ (release 28, 2026-10-07)	2026-11-06
+mirbase/hairpin.fa	0b315c6071e84ee3bd8357c9696845f99b55842ec1cf8a83116fa01749467a5b	7650549	https://www.mirbase.org/download/ (miRBase v23.1; osa.gff3 dated 2026-9-16, IRGSP-1.0)	2026-11-06
+mirbase/mature.fa	52d69eeb3c23c5ed0f66c8c9f24e1ad2cd94cc34e72e4fc376c0dd438d2779ff	6127225	https://www.mirbase.org/download/ (miRBase v23.1; osa.gff3 dated 2026-9-16, IRGSP-1.0)	2026-11-06
+mirbase/osa.gff3	38380b44768d10024f15a841556261f24f106e8f733dae5aa3684dfaf6d6cc2c	161337	https://www.mirbase.org/download/ (miRBase v23.1; osa.gff3 dated 2026-9-16, IRGSP-1.0)	2026-11-06
+pmiren/Oryza_sativa_v3.1.bed	NOT_DOWNLOADED	0	https://www.pmiren.com/model_species_bed/Oryza_sativa_v3.1.bed (connection reset by peer, 2026-11-06 ~10:10 EST)	2026-11-06

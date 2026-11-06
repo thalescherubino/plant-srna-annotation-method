@@ -1,0 +1,7 @@
+eligible=148 selected=100 excluded=2987
+eligible by organ: {'seedling_shoot': 16, 'panicle_inflorescence': 57, 'anther_pollen_meiocyte': 29, 'leaf': 26, 'callus_culture': 2, 'sheath_stem_node': 3, 'seed_embryo_endosperm': 9, 'root': 6}
+selected by organ: {'anther_pollen_meiocyte': 16, 'callus_culture': 2, 'leaf': 24, 'panicle_inflorescence': 24, 'root': 6, 'seed_embryo_endosperm': 9, 'seedling_shoot': 16, 'sheath_stem_node': 3}
+selected by subspecies: {'japonica_nipponbare': 14, 'unknown_sativa': 7, 'japonica_other': 37, 'indica_or_aus': 42}
+selected by format: {'count_seq': 12, 'seq_count': 83, 'fasta_collapsed': 5}
+selected series: 18 {'GSE149800': 12, 'GSE166668': 12, 'GSE108238': 12, 'GSE111440': 10, 'GSE77300': 9, 'GSE77332': 8, 'GSE109299': 4, 'GSE180456': 4}
+exclusion reasons: [('not_small_rna_library', 1698), ('no_read_level_file', 580), ('not_oryza_sativa', 406), ('mutant_or_transgenic', 195), ('duplicate_gsm_in_superseries', 51), ('nonstandard_library', 18), ('non_integer_counts(normalized_values)', 12), ('deleterious_line', 12), ('manual', 6), ('duplicate_content_of', 4), ('few_18_30nt_reads', 3), ('length_truncated', 2)]

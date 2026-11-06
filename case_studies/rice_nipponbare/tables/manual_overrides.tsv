@@ -1,0 +1,5 @@
+gsm	field	value	reason
+GSM2080685	exclude	retrotransposon_insertion_line	GSE78900/78903: Resui retrotransposon insertion line (genotype "WT-1 copy")
+GSM2080686	exclude	retrotransposon_insertion_line	GSE78900/78903: Resui retrotransposon insertion line (genotype "WT-3 copies")
+GSM7874130	exclude	nonstandard_library_type	GSE244009: TRM-sRNA-seq protocol on pooled inflorescence/leaf/root tissue
+GSM7874131	exclude	nonstandard_library_type	GSE244009: TRM-sRNA-seq protocol on pooled inflorescence/leaf/root tissue
