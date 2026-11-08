@@ -27,7 +27,16 @@ The policy for every species is to predict genome-wide first, then compare with 
 | `make_rfam_structural_subset.py` | Build the Rfam structural subset (rRNA, snRNA, snoRNA, scaRNA; 827 families in Rfam 15.1) and a matching clan file. |
 | `run_structural_scan.sh` | tRNAscan-SE `-E` with EukHighConfidenceFilter, then genome-wide `cmscan --cut_ga --rfam --nohmmonly --clanin`, with Z = 2 × genome Mb. |
 
-## 3. Quality control (`qc/`)
+## 3. miRNA validation (`mirna/`)
+
+| Script | Purpose |
+|---|---|
+| `build_mirscore_inputs.py` | Build miRScore hairpin/mature FASTAs (`X`, `X.mature`, `X.star`) for a ShortStack 4 results directory, a miRador `finalAnnotatedCandidates.csv`, or miRBase filtered to one species. Predictor hairpins are the duplex ± 20 nt, capped at 300 nt. |
+| `mirscore_chunks.py` | Split a set into N hairpin chunks for parallel miRScore runs, then merge the per-chunk CSVs and check that every hairpin appears exactly once. |
+
+Libraries are expanded with Phasis `support_scripts/TagToFasta.py` into uncompressed FASTA. Run miRBase sets through miRScore's `hairpinHelper` first.
+
+## 4. Quality control (`qc/`)
 
 | Script | Purpose |
 |---|---|

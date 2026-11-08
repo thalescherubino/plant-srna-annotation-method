@@ -79,7 +79,7 @@ The cultivar effect is largest at 24 nt. Indica libraries were kept because they
 ## Runs in progress
 
 - **Queue:** one 32-core job at a time.
-- **Phasis 2.8.4** (`90a3a0c`, `-mismat 0`, `-maxhits 25`): 21- and 24-nt runs on individual libraries, then pooled.
+- **Phasis 2.8.4** (`90a3a0c`, `-mismat 0`, `-maxhits 25`): 21- and 24-nt runs on individual libraries, then pooled. The 21-nt individual, 24-nt individual and 21-nt pooled runs used separate run directories, so the index was rebuilt each time. From 2026-11-07 the pooled 24-nt run reuses the 24-nt run directory (`--outdir 24_results_pooled`), and later species use one run directory for all Phasis analyses (see `docs/decisions.md`).
 - **ShortStack 4.1.2:** `--dn_mirna`, then a second run with `--known_miRNAs` from miRBase 23.1.
 - **miRador:** Python 3.12 port.
 - **miRScore 0.3.7:** evaluation of the predicted candidates comes after these runs.
