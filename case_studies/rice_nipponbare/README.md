@@ -76,7 +76,14 @@ The cultivar effect is largest at 24 nt. Indica libraries were kept because they
 - **snoR71:** 157 hits, to be checked for repeat inflation.
 - **Comparison with RNAcentral:** done afterwards. A first approximate pass with the RNAcentral coordinate file found RNAcentral support for all but 7 Rfam hits.
 
-## Runs in progress
+## Run status (2026-11-09)
+
+All runs finished on cbsubl02 (about 60 h at 32 cores). The numbers are preliminary; review is pending (see `docs/decisions.md`, Planned improvements):
+- miRScore: ShortStack 96/97, miRador 437/580 (36 via rescue), miRBase 23.1 276/516 precursors (179 only via rescue).
+- 21-*PHAS* (`phasis-compare`): 1,011 loci. 24-*PHAS*: 216 per library; the pooled run adds 3,756 mostly hc-siRNA-like loci (decision pending).
+- Caveat: miRador discovery used `selected_rice_v1` libraries (see `docs/decisions.md`, 2026-11-09).
+
+## Runs (as set up)
 
 - **Queue:** one 32-core job at a time.
 - **Phasis 2.8.4** (`90a3a0c`, `-mismat 0`, `-maxhits 25`): 21- and 24-nt runs on individual libraries, then pooled. The 21-nt individual, 24-nt individual and 21-nt pooled runs used separate run directories, so the index was rebuilt each time. From 2026-11-07 the pooled 24-nt run reuses the 24-nt run directory (`--outdir 24_results_pooled`), and later species use one run directory for all Phasis analyses (see `docs/decisions.md`).

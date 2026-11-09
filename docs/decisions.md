@@ -43,6 +43,13 @@ Decisions made while extending the method beyond maize B73v5. Each entry gives t
 | Rename the organelle class to **organelle-type ncRNAs** (bacterial-like rRNAs and tRNAs). Whether a genome includes organelle contigs varies, so it is never assumed. | Organelle-type sequences can be genuine organelle genes (when organelle contigs are in the assembly) or nuclear copies of organelle DNA (NUPT/NUMT). Organelles also have their own tRNAs, so the class is not limited to rRNA. |
 | All annotation sets (canonical, exploratory, organelle-type) are truth sets for validating PlantCAD2; none is treated as lesser. "Quantification set" is no longer the goal. | The project goal changed from quantification to model validation. |
 
+## 2026-11-09
+
+| Decision | Reason |
+|---|---|
+| Tomato (Heinz 1706 PlantCAD2 genome) runs on cbsubl01 under its own `/workdir/thc47`; rice and maize data stay on cbsubl02. Handoffs, rules, tools, small resources and copies of final results go to the shared `/home/thc47/srna_annotation_shared/`. | cbsubl02 is reserved for GPU work. `/home` is shared by all servers; `/workdir` is local to each. |
+| Rice miRador discovery ran on the earlier library set (`selected_rice_v1`), which contains two byte-identical re-deposits (GSM3030846/47) and lacks GSM2049384 and GSM2253121; miRScore scored all sets on the final set. The queue for later species refuses to start miRador unless its ini points at the frozen set. | Found while preparing the tomato handoff. Rerunning rice miRador on the final set (about 1 h) is optional. |
+
 ## Planned improvements (not yet implemented)
 
 | Topic | Plan |
