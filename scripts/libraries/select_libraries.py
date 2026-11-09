@@ -3,12 +3,14 @@
 
 Inputs: annotated GEO samples + format probe (see curate_geo_candidates.py, probe_geo_formats.py).
 Rules (2026-11-06 user decisions):
-  * rice sRNA libraries only; read-level processed files only (sequence+count, collapsed FASTA, reads, FASTQ);
+  * target-species sRNA libraries only (--species, rules in species_profiles.py); read-level processed files only (sequence+count, collapsed FASTA, reads, FASTQ);
   * exclude mutants/transgenics and obvious deleterious lines (male-sterile, CMS, TGMS/PTGMS);
     other special lines (NIL, hybrids) are excluded by default and listed;
   * pre-filtered files allowed, flagged;
   * maximize organ diversity: round-robin over organ categories;
-  * within an organ: Nipponbare > other japonica > unknown cultivar > indica/aus; control > treated;
+  * within an organ: genotype-group rank from the species profile (rice: Nipponbare > other japonica > unknown
+    cultivar > indica/aus; tomato: Heinz 1706 > other cultivars > unknown > cerasiforme > interspecific lines);
+    wild type > special line; control > treated;
     then series with fewer libraries already chosen; then GSM order (deterministic);
   * at most --per-series libraries from one series; total <= --max.
 Writes selection, the ranked eligible pool and the exclusion reasons.
@@ -16,18 +18,42 @@ Writes selection, the ranked eligible pool and the exclusion reasons.
 import argparse
 import collections
 import csv
+import os
 import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from species_profiles import PROFILES  # noqa: E402
 
 READ_LEVEL = {'tagcount_seq_count', 'tagcount_count_seq', 'fasta_collapsed', 'fasta_reads', 'fastq'}
-DELETERIOUS_LINE = re.compile(r'male[- ]sterile|\bcms\b|tgms|ptgms|egms|\b\d+s\b|sterile', re.I)
-SUB_RANK = {'japonica_nipponbare': 0, 'japonica_other': 1, 'unknown_sativa': 2, 'indica_or_aus': 3}
 NONSTANDARD = re.compile(r'csrna|\[pare\]|(?<![a-z])pare(?![a-z])|degradome|trm-srna|ribo-?z|ribozero|\bip\b|immunoprecip', re.I)
+# Long-RNA libraries mislabelled as miRNA-Seq/ncRNA-Seq (found in tomato SRA, 2026-11-09). Poly(A) alone is NOT a
+# long-RNA sign: several small-RNA kits add a poly(A) tail.
+LONG_RNA = re.compile(r'lncrna|lincrna|long non-?coding|circ ?rnas?\b|circular rna|ribo-?zero|rrna[- ]deplet|rrna removal|'
+                      r'whole[- ]transcriptome|dual rna-?seq|mrna-?seq|degradome', re.I)
+LONG_SELECTION = {'oligo-dt', 'inverse rrna', 'inverse rrna selection', 'polya'}
+SMALL_WORDS = re.compile(r'small ?rna|srna|mirna|micro ?rna|sirna|phasirna|truseq small|nebnext small|qiaseq mirna|'
+                         r'nextflex small|size[- ]?(fraction|select)', re.I)
 PREFILTER = re.compile(r'match|mapped|map\b|_map|genome|aligned|clean|filtered|uniq', re.I)
+
+
+def hard_qc(flags):
+    """Hard small-RNA-profile failures from sra_to_tagcount.py flags (other flags are for review only)."""
+    f = flags.split(';') if flags else []
+    if 'no_21_22_peak' in f and 'no_23_24_peak' in f:
+        return 'no_21_22_and_no_23_24_peak'
+    for x in f:
+        if x.startswith('main_peak_') and int(x[len('main_peak_'):-2]) not in range(20, 26):
+            return x
+        if x.startswith('low_exact_map_20_24:') and float(x.split(':')[1]) < 0.3:
+            return x
+    return ''
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--samples', required=True)
+    ap.add_argument('--species', default='rice', choices=sorted(PROFILES))
     ap.add_argument('--probe', required=True)
     ap.add_argument('--overrides', help='TSV gsm<TAB>field<TAB>value manual corrections (organ, subspecies, exclude)')
     ap.add_argument('--stats', help='library_stats.tsv from inspect_and_standardize_libraries.py (full-file checks)')
@@ -38,6 +64,8 @@ def main():
     ap.add_argument('--per-series', type=int, default=12)
     ap.add_argument('--out-prefix', required=True)
     a = ap.parse_args()
+    prof = PROFILES[a.species]
+    DELETERIOUS_LINE, SUB_RANK = prof['deleterious'], prof['rank']
 
     probe = collections.defaultdict(list)
     for p in csv.DictReader(open(a.probe), delimiter='\t'):
@@ -55,14 +83,27 @@ def main():
             r[k] = v
         reason = None
         text = ' '.join([r['title'], r['source'], r['characteristics']])
+        kit_text = ' '.join([r.get('design', ''), r.get('protocol', '')])  # SRA design/protocol (empty for GEO)
         if r['subspecies'] == 'non_target':
-            reason = 'not_oryza_sativa'
+            reason = 'not_' + prof['target']
         elif r['srna_library'] != 'yes':
             reason = 'not_small_rna_library'
         elif r.get('exclude'):
             reason = 'manual:' + r['exclude']
-        elif NONSTANDARD.search(text + ' ' + r.get('library_selection', '')):
-            reason = 'nonstandard_library:' + NONSTANDARD.search(text + ' ' + r.get('library_selection', '')).group(0)
+        elif r.get('runs') is not None and r.get('library_selection', '').lower() in LONG_SELECTION:
+            reason = 'long_rna_library:' + r['library_selection']
+        elif r.get('runs') is not None and LONG_RNA.search(text + ' ' + kit_text) and not (
+                SMALL_WORDS.search(text + ' ' + kit_text) and r.get('avg_len') and float(r['avg_len']) <= 60):
+            # experiment-level text only: some studies mix small-RNA and long-RNA libraries
+            reason = 'long_rna_library:' + LONG_RNA.search(text + ' ' + kit_text).group(0)
+        elif r.get('runs') is not None and r.get('avg_len') and float(r['avg_len']) >= 100 and not SMALL_WORDS.search(
+                text + ' ' + kit_text + ' ' + r.get('study_title', '')):
+            reason = f"long_reads_without_small_rna_evidence:{r['avg_len']}"
+        elif r.get('runs') is not None and r.get('library_strategy') == 'ncRNA-Seq' and not SMALL_WORDS.search(
+                text + ' ' + kit_text + ' ' + r.get('study_title', '')):
+            reason = 'ncrna_seq_without_small_rna_evidence'
+        elif NONSTANDARD.search(text + ' ' + kit_text + ' ' + r.get('library_selection', '')):
+            reason = 'nonstandard_library:' + NONSTANDARD.search(text + ' ' + kit_text + ' ' + r.get('library_selection', '')).group(0)
         elif r['gsm'] in seen_gsm:
             reason = 'duplicate_gsm_in_superseries:' + seen_gsm[r['gsm']]
         elif r['genotype_class'] == 'mutant_or_transgenic':
@@ -96,6 +137,8 @@ def main():
                     reason = f"length_truncated:{s['min_len']}-{s['max_len']}"
                 elif s is not None and float(s['frac_18_30']) < 0.5:
                     reason = f"few_18_30nt_reads:{s['frac_18_30']}"
+                elif s is not None and s.get('flags') is not None and hard_qc(s['flags']):
+                    reason = 'not_small_rna_profile:' + hard_qc(s['flags'])
                 else:
                     if s is not None:
                         r['file_format'] = s['layout']

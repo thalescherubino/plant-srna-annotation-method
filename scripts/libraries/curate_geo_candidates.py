@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Annotate rice GEO samples for small-RNA library selection (no downloads of data files).
+"""Annotate GEO samples of one species for small-RNA library selection (no downloads of data files).
 
-Adds derived columns to inventory/geo/geo_samples.tsv:
-  subspecies      japonica_nipponbare | japonica_other | indica | unknown_sativa | non_target
+Usage: curate_geo_candidates.py <inventory_dir> [--species rice|tomato]   (default rice, as originally written)
+Species-specific rules (genotype groups, organ categories, extra mutant/special-line terms) are in species_profiles.py.
+Adds derived columns to <inventory_dir>/geo_samples.tsv:
+  subspecies      genotype group from the species profile (rice: japonica_nipponbare | japonica_other |
+                  indica_or_aus | unknown_sativa; tomato: heinz_1706 | cultivar_other | unknown_lycopersicum |
+                  cerasiforme | interspecific_line), or non_target
   srna_library    yes/no  (library strategy ncRNA-Seq/miRNA-Seq, or small-RNA wording when strategy empty/OTHER)
   processed_file  first supplementary file that could hold sequences+counts (txt/tsv/csv/fa/fasta), else ''
   genotype_class  wild_type | mutant_or_transgenic | other_line (NIL, breeding line) ; with matched term
@@ -10,12 +14,14 @@ Adds derived columns to inventory/geo/geo_samples.tsv:
   treatment_class control_or_none | treated
 Rules are explicit regular expressions so decisions are reviewable.
 """
+import argparse
 import csv
+import os
 import re
 import sys
 
-IN = (sys.argv[1] if len(sys.argv) > 1 else 'inventory/geo') + '/geo_samples.tsv'
-OUT = (sys.argv[1] if len(sys.argv) > 1 else 'inventory/geo') + '/geo_samples.annotated.tsv'
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from species_profiles import PROFILES  # noqa: E402
 
 # (?<![a-z]) / (?![a-z]) instead of \b so that "_" and "os" prefixes still match (e.g. KD_CLSY3, OE_Rep1, osnrpd1ab)
 MUTANT = re.compile(r'(mutant|mutants|mutation|knock[- ]?out|knock[- ]?down|(?<![a-z])(ko|kd|oe|ox)(?![a-z])|(?<![a-z])rnai(?![a-z])|'
@@ -27,33 +33,21 @@ WILD = re.compile(r'(wild[- ]?type|(?<![a-z])wt(?![a-z])|control plants?|non-?tr
 OTHER_LINE = re.compile(r'\b(nil|near[- ]isogenic|introgression|ril|cms|male[- ]sterile|maintainer|restorer|hybrid|'
                         r'f1\b|\d+s\b|ptgms|tgms|egms)', re.I)
 SRNA_WORDS = re.compile(r'small ?rna|srna|mirna|micro ?rna|sirna|phasirna|ncrna', re.I)
-STRESS = re.compile(r'infect|xoo|pathogen|blast|virus|rsv|drought|cold|salt|heat|chill|freez|stress|'
+STRESS = re.compile(r'infect|xoo|pathogen|blast|virus|viroid|rsv|botrytis|pseudomonas|phytophthora|fusarium|nematode|'
+                    r'meloidogyne|cladosporium|xanthomonas|ralstonia|tylcv|tomv|tmv|cmv|pstvd|drought|cold|salt|heat|chill|freez|stress|'
                     r'hpi\b|\d+ ?h(our)?s? (post|after)|\bn0\b|low n|deficien|zn[- ]|arsenic|as\(iii\)|submerg|anoxi|hypoxi|'
                     r'glyphosate|herbicide|aza|drug|uv|light exposure|dark|wound|insect|planthopper|treated(?! with water)', re.I)
 CONTROL = re.compile(r'\b(control|untreated|no treatment|mock|water|none|normal|ck\b|0 ?h\b|non-?treated)', re.I)
-ORGANS = [
-    ('mixed_tissues', r',.*\b(and|,)\b.*|inflorescences, leaves|leaves, roots|mixed|pooled tissues'),
-    ('anther_pollen_meiocyte', r'anther|pollen|meiocyte|microspore|tetrad|stamen'),
-    ('root', r'\broots?\b|radicle|root tip'),
-    ('panicle_inflorescence', r'panicle|inflorescence|spikelet|floret|flower|young ear|rachis|glume|pistil|ovar'),
-    ('seed_embryo_endosperm', r'embryo|endosperm|\bseeds?\b|grain|caryopsis|\bdap\b|aleurone'),
-    ('callus_culture', r'callus|cell culture|suspension|protoplast'),
-    ('leaf', r'flag ?leaf|leaf|leaves|blade'),
-    ('sheath_stem_node', r'sheath|stem|culm|node|internode|tiller|crown|shoot base|shoot apex|\bsam\b|meristem'),
-    ('seedling_shoot', r'seedlings?|shoot|aerial|whole plant|plantlet|coleoptile'),
-]
-
-
-def organ_of(r):
+def organ_of(r, organs):
     """Organ from the explicit tissue/source fields first; title and stage text only as fallback."""
     parts = r['characteristics'].split(' | ')
-    explicit = ' '.join(p.split(':', 1)[1] for p in parts if re.match(r'\s*(tissue|organ|cell type)\s*:', p, re.I))
+    explicit = ' '.join(p.split(':', 1)[1] for p in parts if re.match(r'\s*(tissue|organ|cell type|source_name)\s*:', p, re.I))
     for text in (explicit, r['source'], r['title'],
                  ' '.join(p for p in parts if re.match(r'\s*(developmental stage|stage|age)\s*:', p, re.I))):
         text = text.lower()
         if not text.strip():
             continue
-        for name, pat in ORGANS:
+        for name, pat in organs:
             if name == 'mixed_tissues' and text is not explicit.lower():
                 continue  # only call "mixed" from an explicit multi-tissue field
             if re.search(pat, text):
@@ -61,22 +55,14 @@ def organ_of(r):
     return 'unclassified'
 
 
-def subspecies(r, text):
-    org = r['organism'].lower()
-    if 'oryza sativa' not in org:
-        return 'non_target'
-    if re.search(r'nipp?on?bare|nipponbare|nippnbare', text):
-        return 'japonica_nipponbare'
-    if 'indica' in org or re.search(r'indica|93-?11|9311|ir24|ir64|irbb|pusa basmati|pb-?1\b|zhenshan|minghui|teqing|kasalath|co39|n22|aus\b', text):
-        return 'indica_or_aus'
-    if 'japonica' in org or re.search(r'japonica|japanica|japponica|kitaake|zhonghua|dongjin|hwayoung|nongken|taichung|'
-                                      r'koshihikari|wuyunjing|ilmi|illmi|jowoon|gopum|azucena|\baz_|9522|zhonghua ?11|'
-                                      r'heukgyeong|nipponbare', text):
-        return 'japonica_other'
-    return 'unknown_sativa'
-
-
 def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('inventory_dir', nargs='?', default='inventory/geo')
+    ap.add_argument('--species', default='rice', choices=sorted(PROFILES))
+    a = ap.parse_args()
+    prof = PROFILES[a.species]
+    IN = os.path.join(a.inventory_dir, 'geo_samples.tsv')
+    OUT = os.path.join(a.inventory_dir, 'geo_samples.annotated.tsv')
     rows = list(csv.DictReader(open(IN), delimiter='\t'))
     out_fields = list(rows[0].keys()) + ['subspecies', 'srna_library', 'processed_file', 'genotype_class',
                                          'genotype_evidence', 'organ', 'treatment_class']
@@ -85,7 +71,7 @@ def main():
         w.writeheader()
         for r in rows:
             text = ' '.join([r['title'], r['source'], r['characteristics']]).lower()
-            r['subspecies'] = subspecies(r, text)
+            r['subspecies'] = prof['genotype'](r, text)
             strat = r['library_strategy']
             r['srna_library'] = 'yes' if strat in ('ncRNA-Seq', 'miRNA-Seq') or (
                 strat in ('', 'OTHER') and SRNA_WORDS.search(text)) else 'no'
@@ -95,14 +81,15 @@ def main():
             geno_text = ' '.join(p for p in r['characteristics'].split(' | ')
                                  if re.match(r'(genotype|strain|cultivar|line|variety|ecotype|background)', p, re.I))
             geno_text = (geno_text + ' ' + r['title'] + ' ' + r['source']).strip()
-            m = MUTANT.search(geno_text)
+            m = MUTANT.search(geno_text) or (prof['extra_mutant'].search(geno_text) if prof['extra_mutant'] else None)
             if m and not WILD.search(geno_text.split(m.group(0))[0][-40:] + m.group(0)):
                 r['genotype_class'], r['genotype_evidence'] = 'mutant_or_transgenic', m.group(0)
-            elif OTHER_LINE.search(geno_text):
-                r['genotype_class'], r['genotype_evidence'] = 'other_line', OTHER_LINE.search(geno_text).group(0)
+            elif OTHER_LINE.search(geno_text) or (prof['extra_other_line'] and prof['extra_other_line'].search(geno_text)):
+                hit = OTHER_LINE.search(geno_text) or prof['extra_other_line'].search(geno_text)
+                r['genotype_class'], r['genotype_evidence'] = 'other_line', hit.group(0)
             else:
                 r['genotype_class'], r['genotype_evidence'] = 'wild_type', (WILD.search(geno_text).group(0) if WILD.search(geno_text) else '')
-            r['organ'] = organ_of(r)
+            r['organ'] = organ_of(r, prof['organs'])
             treat = ' '.join(p for p in r['characteristics'].split(' | ')
                              if re.match(r'\s*(treatment|stress|condition|agent|infection|time)', p, re.I))
             treat_all = ' '.join([treat, r['title']]).lower()
