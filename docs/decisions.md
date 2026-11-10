@@ -12,7 +12,7 @@ Decisions made while extending the method beyond maize B73v5. Each entry gives t
 | Do not allow within-species mismatches to mature miRNAs; revisit cross-species tolerance later. | The 38 exploratory B73 products that differ by 1–2 nt from their locus are source-vs-genome allele artefacts, not paralog variation. |
 | Annotate each species on the PlantCAD2 genome FASTAs, even when a newer assembly exists. | The annotations are evaluation truth for PlantCAD2. New genomes are a later phase. |
 | Analyse polyploids (e.g. *Coffea arabica*) per subgenome, later. | Homeolog multimapping confounds exact-match evidence. |
-| Use miRador as a Python 3.12 port, kept local and not pushed upstream; use conda-forge and bioconda only. | Upstream pins Python 3.7 and Anaconda `defaults`. The port reproduces upstream test outputs byte-for-byte (`docs/setup.md`). |
+| Use miRador as a Python 3.12 port; use conda-forge and bioconda only. Published on 2026-11-10 with the original authors' agreement as [thalescherubino/miRador `python312-port`](https://github.com/thalescherubino/miRador/tree/python312-port), pull request [rkweku/miRador#21](https://github.com/rkweku/miRador/pull/21). | Upstream pins Python 3.7 and Anaconda `defaults`. The port reproduces upstream test outputs byte-for-byte (`docs/setup.md`). |
 
 ## 2026-11-06
 
