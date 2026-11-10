@@ -12,11 +12,15 @@ Per experiment (SRX, one library; all its runs; read 1 only for paired runs):
  3. choose: evaluate every combination of {adapter or none} x {5' cut 0-4, prefix length} x {extra 3' cut 0-4} with
     cutadapt on the sample, counting reads of 18-34 nt that map to the genome with zero mismatches (Bowtie 1
     -v 0 -k 1). Pick the adapter with the most mapped reads; then, starting from no extra cut, accept a further
-    cut only when it raises the mapped count by >= 20% (a real artefact: leftover 4N bases, barcodes, a fixed
-    ligation base make reads unmappable, so removing them gives a large jump), taking the smallest cut within 3%
+    cut only when it at least DOUBLES the mapped count (a real artefact: leftover 4N bases, barcodes, a fixed
+    ligation base make reads unmappable, so removing them gives a large jump), taking the smallest cut within 10%
     of the best option; repeat until no cut gives such a jump. Small gains are NOT taken: cutting one more base
-    always rescues a few reads with 3' untemplated additions or sequencing errors, and following those gains
-    shifts the true 21/22/24-nt peaks down (tested 2026-11-09 on SRX3793170 and ERX1066761).
+    always rescues reads with 3' untemplated additions or sequencing errors, and following those gains shifts
+    the true 21/22/24-nt peaks down by one (24 -> 23 nt).
+    Calibration (tomato, 140 libraries, 2026-11-09): the gain of the best cut over no cut is bimodal, 1.20-1.41x
+    (3' tailing; cutting created a false 23-nt peak in 17 libraries) vs 2.96-4.1x (a fixed extra 3' base, e.g.
+    SRP135718, SRP093503) and >1000x (4N ends); thresholds JUMP=2.0 and NEAR=0.90 sit in those gaps. The first
+    rule (JUMP=1.2, NEAR=0.97) was superseded the same day; see docs/decisions.md.
  4. trim the full library with the chosen settings (reads without the adapter are discarded when an adapter is
     used: they are inserts longer than the read), keep 18-34 nt, no N, collapse to SEQ<TAB>COUNT (DNA, no header).
  5. report: chosen settings, the whole evaluation table, length histogram, 5' nucleotide by length, mapping rate
@@ -24,6 +28,8 @@ Per experiment (SRX, one library; all its runs; read 1 only for paired runs):
 Writes <out>/<SRX>.tag, <out>/<SRX>.report.json and one TSV row of statistics (stdout or --stats-row).
 
 Usage: sra_to_tagcount.py --srx SRX... --runs SRR1;SRR2 --raw DIR --out DIR --index BOWTIE_INDEX [--threads 6]
+       [--reuse-evaluation OLD_REPORT.json]  re-choose and re-trim from a saved detect/evaluation (same sample,
+       deterministic) instead of re-scoring; used when the choice rule changes.
 Needs sra-tools, cutadapt, bowtie (1.x) and pigz on PATH (env plant-srna-reads).
 """
 import argparse
@@ -200,11 +206,11 @@ def evaluate(seqs, settings, index, threads, tmp):
     return rows
 
 
-JUMP, NEAR = 1.20, 0.97
+JUMP, NEAR = 2.0, 0.90  # calibrated 2026-11-09 on 140 tomato libraries (see module docstring)
 
 
 def choose(rows):
-    """Adapter with the most mapped reads; then stepwise cuts, each accepted only for a >= 20% jump."""
+    """Adapter with the most mapped reads; then stepwise cuts, each accepted only when it multiplies mapped reads by >= JUMP."""
     best_by_ad = collections.defaultdict(int)
     for r in rows:
         best_by_ad[r['adapter']] = max(best_by_ad[r['adapter']], r['mapped_total'])
@@ -265,6 +271,7 @@ def main():
     ap.add_argument('--index', required=True, help='Bowtie 1 genome index prefix')
     ap.add_argument('--threads', type=int, default=6)
     ap.add_argument('--tmp', default=None)
+    ap.add_argument('--reuse-evaluation', default=None, help='report.json whose detect/evaluation are reused')
     a = ap.parse_args()
     os.makedirs(a.raw, exist_ok=True)
     os.makedirs(a.out, exist_ok=True)
@@ -273,10 +280,16 @@ def main():
     try:
         fq, how = download(a.srx, [r for r in a.runs.split(';') if r], a.raw, a.threads, tmp)
         rep['raw_fastq'], rep['download'] = fq, how
-        seqs = read_sample(fq, SAMPLE_N)
-        rep['detect'] = detect(seqs)
-        evals = evaluate(seqs, candidate_settings(rep['detect']), a.index, a.threads, tmp)
+        if a.reuse_evaluation:
+            old = json.load(open(a.reuse_evaluation))
+            rep['detect'], evals = old['detect'], old['evaluation']
+            rep['reused_evaluation_from'] = a.reuse_evaluation
+        else:
+            seqs = read_sample(fq, SAMPLE_N)
+            rep['detect'] = detect(seqs)
+            evals = evaluate(seqs, candidate_settings(rep['detect']), a.index, a.threads, tmp)
         rep['evaluation'] = evals
+        rep['choice_rule'] = {'JUMP': JUMP, 'NEAR': NEAR}
         best, rep['choice_path'] = choose(evals)
         rep['chosen'] = {k: best[k] for k in ('adapter', 'adapter_seq', 'cut5', 'cut3')}
         trimmed = os.path.join(tmp, 'trimmed.fastq.gz')
