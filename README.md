@@ -15,6 +15,7 @@ The vector figure can be downloaded and used in presentations. Its [accessible t
 5. Use the [reusable scripts](scripts/README.md) for public-library curation, genome-wide structural RNA prediction and mapping QC.
 6. Check the [decision log](docs/decisions.md) for dated project decisions and their reasons.
 7. Review the [release checklist](docs/release_checklist.md) before sharing an annotation.
+8. To run the workflow with an AI agent, or to learn it step by step, use the [plant sRNA annotation skill](skills/README.md) (prototype): a short map plus one guide per step, a glossary, an output-interpretation guide and a pitfalls list.
 
 An AI agent or analyst should first inventory the actual assembly, public databases, annotation sources, and available small-RNA libraries for the target species. Evidence availability determines which branches can be completed. Record failed searches and limitations; do not treat a lack of a database hit as proof that a feature is absent.
 
