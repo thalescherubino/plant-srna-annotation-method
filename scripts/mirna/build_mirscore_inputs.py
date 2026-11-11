@@ -165,6 +165,7 @@ def main():
         chroms = {c: None for c in g.idx}
         mat_seqs = [s for _, s in mats]
         ext = 0
+        dropped = []
         for name, hseq in hps:
             touches = any(hseq.startswith(s) or hseq.endswith(s) for s in mat_seqs if s in hseq)
             if touches:
@@ -187,10 +188,24 @@ def main():
                         log.append(f'EXTENDED {name}: mature/star at hairpin end; {len(hseq)} -> {len(new)} nt from {c}:{s}-{e}({strand})')
                         hseq = new; ext += 1
                 else:
-                    log.append(f'NOT_EXTENDED {name}: mature/star at hairpin end and hairpin not found exactly in genome')
+                    # miRScore cannot score a duplex without a 3' overhang and stops the whole run when a mature
+                    # starts at hairpin position 1 (tomato sly-MIR156b/c). User decision 2026-11-11: drop every
+                    # such hairpin (with its matures), log it in not_scorable.tsv, score the rest as deposited.
+                    log.append(f'NOT_SCORABLE {name}: mature/star at hairpin end and hairpin not found exactly in genome; dropped')
+                    hit = [(m, hseq.find(s) + 1, hseq.find(s) + len(s)) for m, s in mats
+                           if re.sub(r'-(5p|3p)$', '', m).lower() == name.lower() and s in hseq]
+                    dropped.append((name, len(hseq), ';'.join(m for m, _, _ in hit),
+                                    ';'.join(f'{m}:{a}-{b}' for m, a, b in hit)))
+                    continue
             hp.append((name, hseq)); idmap.append((name, name, '', len(hseq), '', ''))
-        mat = mats
-        log.append(f'miRBase {pre} hairpins: {len(hps)}; matures: {len(mats)}; extended: {ext}')
+        gone = {n.lower() for n, *_ in dropped}
+        mat = [(m, s) for m, s in mats if re.sub(r'-(5p|3p)$', '', m).lower() not in gone]
+        with open(os.path.join(a.out, 'not_scorable.tsv'), 'w') as out:
+            out.write('hairpin\thairpin_len\tmatures\tmature_pos_in_hairpin\treason\n')
+            out.writelines(f'{n}\t{l}\t{m}\t{p}\tmature/star at hairpin end; hairpin not found exactly in genome\n'
+                           for n, l, m, p in dropped)
+        log.append(f'miRBase {pre} hairpins: {len(hps)}; matures: {len(mats)}; extended: {ext}; '
+                   f'dropped as not scorable: {len(dropped)} hairpins, {len(mats) - len(mat)} matures (not_scorable.tsv)')
 
     with open(os.path.join(a.out, 'hairpin.fa'), 'w') as out:
         out.writelines(f'>{n}\n{s}\n' for n, s in hp)

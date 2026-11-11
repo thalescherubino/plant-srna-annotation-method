@@ -59,6 +59,13 @@ Decisions made while extending the method beyond maize B73v5. Each entry gives t
 | miRador is run unsplit on all libraries at 32 threads. | Rice took 1.1 h; splitting the library set could change which candidates pass (read support is judged across libraries), for a small time gain in a multi-day queue. |
 | Library curation and selection are species-configurable (`scripts/libraries/species_profiles.py`, `--species rice\|tomato`). | Rice outputs are byte-identical with the refactored scripts (checked on the full rice inventory). |
 
+## 2026-11-11
+
+| Decision | Reason |
+|---|---|
+| miRBase hairpins whose mature or star sits at a hairpin end, and that cannot be found exactly in the reference genome (so they cannot be extended), are **dropped** from the miRScore miRBase set together with their matures. Each is logged in `not_scorable.tsv` (`scripts/mirna/build_mirscore_inputs.py`). The remaining hairpins are scored as deposited. Tomato: 5 of 112 dropped (sly-MIR156b, 156c, 159, 162, 319a); BLAST shows 1–4 mismatches or a 1-nt gap against PlantCAD2 (156c has no strong hit). | miRScore needs a 3′ overhang to score a duplex, and it stops the whole run when a mature starts at hairpin position 1. These entries differ slightly from the reference assembly. The user preferred dropping and logging them over substituting the genome copy. |
+| If `hairpinHelper` writes no adjusted file (no `.1`/`.2` isoform matures, as in tomato), the original miRBase hairpins are used. | hairpinHelper only writes `miRScore_adjusted_hairpins.fa` when a hairpin needs new entries. |
+
 ## Planned improvements (not yet implemented)
 
 | Topic | Plan |
