@@ -43,17 +43,37 @@ For each output: what one row is, the columns that matter, typical values, and w
 
 ## Phasis tables (per phase, per run)
 
-- **`<P>_calls.tsv`, one row = one *PHAS* locus in one supporting library:** `identifier` (`chr:start..end`, the locus), `alib` (the library), `phasis_score` (capped at 300), `Peak_Howell_score`, `Peak_Howell_score_strict`, `Howell_exact_support_score`, `Howell_origin_class`. **Count distinct `identifier` values for loci**; the number of rows per locus is how many libraries support it.
+Phasis explains these files in its README ("Understand the Outputs") and in `docs/scoring.md` and `docs/phasirna_output.md`. Column meanings below follow those documents; where they are silent, the Phasis code was read and the source is named.
+
+- **`<P>_calls.tsv`, one row = one *PHAS* locus in one supporting library:** `identifier` (`chr:start..end`, the locus), `achr`/`start`/`end`, `alib` (the library; `ALL_LIBS` in a pooled run), `phasis_score`, `Peak_Howell_score`, `Peak_Howell_score_strict`, `Howell_exact_support_score`, `Howell_origin_class`. **Count distinct `identifier` values for loci**; the number of rows per locus is how many libraries support it.
   - Tomato 21-nt individual: 1,006 rows = 87 loci (the GFF has 87 lines), supported by 96 libraries in total. 24-nt individual: 898 rows = 366 loci in 25 libraries. 21-nt pooled: 17 loci, broader (median 24 kb against 4 kb per library), because pooled reads chain neighbouring clusters together.
-  - The `Howell_origin_class` counts below are per row, not per locus.
-  - `Howell_origin_class`: `coherent_extension` 769, `mixed_extension_and_ambiguity` 178, `unique_origin` 53, `ambiguous_origin` 6. This describes whether the phased signal grows coherently from one origin or competes with alternative registers.
-- **`<P>_classification_evidence.tsv`, one row = one scored cluster per library**, with `final_class` and `evidence_reason`.
-  - Tomato 21 nt (rows, i.e. cluster × library): 35,691 non-*PHAS*, 1,006 *PHAS*, 622 *PHAS*-like.
-  - *PHAS*-like reasons: `insufficient_exact_support`, `weak_exact_support`, `low_score_crowded_window_context`, `weak_scaffold_alternative_context`.
-- **`<P>_phasiRNAs.tsv`, one row = one phasiRNA sequence at a locus:** `strand` (w = top/Watson, c = bottom/Crick), `observed_pos` vs `expected_register_pos`, `register_class` (`core_exact`, `core_offset`, `extended_exact`), `window_unit_role` (`main_hpsp`, `main_partner`, `overlapping_alternative`, `other_local_peak`), `abun`, `tag_seq`, `hits`.
-  - Tomato 21 nt: 28,371 phasiRNA rows.
-  - Sequences are stored reference-forward, as the read appears on the genome's top strand, also for minus-strand loci. Do not reverse-complement them again.
-- **`<P>_PHAS.gff`:** one line per distinct locus (merged across libraries) with summary attributes (`complexity`, `strand_bias`, `ratio_abund_len_phase`).
+- **The scores** (Phasis `docs/scoring.md`). The Phasis score and the Howell scores are different measures, not two names for one score.
+  - `phasis_score`: statistical evidence for phasing, -log10 of the cluster's window P values combined by Fisher's method, capped at 300. Values at 300 hit the cap; they are not identical evidence.
+  - `Peak_Howell_score` (the main Howell score): support for regularly spaced phase-length reads, from their abundance and the number of occupied phase cycles in a window of ten cycles (210 nt for 21 nt, 240 nt for 24 nt). It tolerates reads 1 nt off the expected position. Phasis's `-min_Howell_score` filter (default 12.5) applies to this score.
+  - `Peak_Howell_score_strict`: a separate scan that counts only reads at exact register positions. Its peak may come from a different window or register than the main score.
+  - `Howell_exact_support_score`: exact-register support inside the main score's peak window. Not the same as the strict score.
+- **`Howell_origin_class`** (not described in the README; from the code, `_summarize_peak_howell_ambiguity` in `phasis/stages/feature_assembly.py`): looks at other windows on the same strand that overlap the peak window and reach at least 90% of its exact support.
+  - `unique_origin`: no such window. `coherent_extension`: all such windows share the peak's register (the phased signal extends). `ambiguous_origin`: all are in another register (competing registers). `mixed_extension_and_ambiguity`: both kinds.
+  - Tomato 21-nt individual, counted per row, not per locus: `coherent_extension` 769, `mixed_extension_and_ambiguity` 178, `unique_origin` 53, `ambiguous_origin` 6.
+- **`<P>_classification_evidence.tsv`, one row = one classified cluster in one library** (`identifier`, `alib`, `cID`), with `final_class` (`PHAS`, `PHAS-like` or `non-PHAS`) and `evidence_reason`. The README calls this the register-resolved evidence; the reason values are not listed there and come from the code (`phasis/stages/classify.py`, where the thresholds are):
+
+| `final_class` | `evidence_reason` | Plain meaning | Tomato 21 nt (rows) |
+|---|---|---|---|
+| PHAS | `pass` | passed the classifier and every exact-support check | 1,006 |
+| PHAS-like | `weak_exact_support` | some exact-register support, but little | 368 |
+| PHAS-like | `low_score_crowded_window_context` | modest main Howell score among many crowded competing windows | 244 |
+| PHAS-like | `weak_scaffold_alternative_context` | medium main Howell score, weak exact or strict support, and competing or ambiguous context | 10 |
+| non-PHAS | `classifier_non_phas` | rejected by Phasis's classifier | 35,229 |
+| non-PHAS | `insufficient_exact_support` | no exact-register support at all | 462 |
+
+- **The class is decided per library, not per locus.** The same locus can be *PHAS* in one library and *PHAS*-like in another: in tomato 21 nt, 62 of the 99 *PHAS*-like loci are also *PHAS* in some other library. The *PHAS*-like GFF therefore overlaps the *PHAS* GFF; remove those identifiers before reporting "*PHAS*-like only" loci.
+- **`<P>_phasiRNAs.tsv`, one row = one read assignment** (a sequence in one phased unit of one locus in one library), not one row per distinct sequence (Phasis `docs/phasirna_output.md`). Only reads whose length equals the phase are included. Columns: `identifier`, `cID`, `alib`, `phase`, `window_unit_id` (`unit_main` or `unit_secondary_<n>`, local to the locus and library), `window_unit_role`, `strand` (`w` forward, `c` reverse), `observed_pos` vs `expected_register_pos`, `register_class`, `abun`, `tag_seq`, `hits`.
+  - `register_class`: `core_exact` (read at an expected position of the core register), `core_offset` (no read at the exact position, so a read 1 nt away; the more abundant neighbour if both exist), `extended_exact` (exact position in a supported extension beyond the core window). For an exact-only set, drop `core_offset`.
+  - `window_unit_role`: the main unit has `main_hpsp` (the anchor window), `main_partner` (compatible opposite-strand support) and `main_extension`; secondary units are `overlapping_alternative` or `other_local_peak`. `other_local_peak` does not by itself mean a physical gap; check positions and the plot.
+  - Tomato 21 nt: 28,371 rows (`extended_exact` 14,242, `core_exact` 9,449, `core_offset` 4,680; no `main_extension` rows).
+  - **Do not sum `abun` over rows:** one read can be assigned to several units, positions or libraries.
+  - **Orientation:** `tag_seq` is written as aligned, i.e. reference-forward (as on the genome's forward strand). `w` rows are the sRNA as written. `c` rows are the reverse complement of the sRNA; reverse-complement them once to get the sRNA 5′→3′, for example for target prediction (Phasis `docs/phasirna_output.md`, "Preparing sequences for target prediction"). Never flip `w` rows, and never flip a sequence twice. State the orientation of any released phasiRNA FASTA (the B73 v1 release kept the reference-forward form).
+- **`<P>_PHAS.gff`:** one line per distinct `identifier`, on `achr` from `start` to `end`. The score column is `phasis_score` and the strand is `.`. The attributes (`id`, `complexity`, `strand_bias`, `log_clust_len_norm_counts`, `ratio_abund_len_phase`) come from the first library row of that locus, not from a merge across libraries (code: `write_gff` in `phasis/stages/output.py`).
 - **Howell score distributions:** compare pooled-only loci with loci also found per library before choosing any cut-off ([07_phas_phasis.md](07_phas_phasis.md)).
 - **Doesn't show:** a *PHAS* locus is not necessarily a protein-coding gene or a known *TAS* locus, and phasiRNAs are not shown to move or act.
 

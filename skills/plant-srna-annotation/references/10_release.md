@@ -6,6 +6,7 @@
 
 - Per-class and unified **GFF3** files on the reference genome.
 - **FASTA** files per class: genomic sequences, plus mature-product sequences where they differ (spliced tRNAs with CCA, mature miRNAs, phasiRNAs).
+- Keep *PHAS*-like phasiRNAs (`<P>_PHAS_like_phasiRNAs.tsv`) in their own files, separate from *PHAS* phasiRNAs, as Phasis's own output does. State the sequence orientation used: Phasis writes `tag_seq` as aligned to the reference; the original read is the reverse complement for `c` (bottom-strand) rows.
 - **Evidence tables:** miRScore results, Phasis calls and evidence, structural hit tables, library manifest and QC.
 - **Ledgers:** excluded libraries, dropped or unscorable candidates (`not_scorable.tsv`), held-for-review items, each with its reason.
 - **Manifests:** software versions and commits, database releases, commands, input and output checksums.

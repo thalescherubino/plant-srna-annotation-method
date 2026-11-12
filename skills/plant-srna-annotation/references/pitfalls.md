@@ -56,8 +56,8 @@ Every entry happened on a real run (maize, rice or tomato). Search this page for
 | Corrupted cache or odd results | two Phasis runs in one directory at once | never run two at once in one directory |
 | 24-nt run takes more than a day | about 100× more clusters pass the pre-filter than at 21 nt; scoring and feature assembly scale with that | expected; schedule other steps meanwhile; report tool bottlenecks to developers |
 | Pooled 24-nt run adds thousands of broad loci | dense hc-siRNA clusters produce chance phasing | keep the run; choose a Howell cut-off from the distributions with the project lead |
-| phasiRNA sequences look reverse-complemented on minus-strand loci | sequences are stored reference-forward | do not flip them again |
-| *PHAS* counts disagree between reports | GFF loci vs phased sub-loci | say which unit you count |
+| phasiRNA sequences on `c` (reverse-strand) rows do not match the library reads | Phasis writes `tag_seq` as aligned, i.e. reference-forward | reverse-complement `c` rows once when you need the sRNA 5′→3′ (Phasis `docs/phasirna_output.md`); never flip `w` rows or flip twice; state the orientation in any release |
+| *PHAS* counts disagree between reports | GFF loci vs phased units, or `calls.tsv` rows (locus × library) vs loci | say which unit you count; count distinct `identifier` for loci |
 
 ## Structural RNAs and comparisons
 

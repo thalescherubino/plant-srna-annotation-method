@@ -22,10 +22,11 @@
 
 - **phasiRNA:** secondary siRNAs produced when a long double-stranded RNA is diced from one end in consecutive 21-nt or 24-nt steps. Their 5′ ends fall every 21 (or 24) nt: they are **in phase**.
 - ***PHAS* locus:** the genomic region producing phasiRNAs. **21-*PHAS*** loci are common in vegetative tissues and anthers; **24-*PHAS*** loci are typical of grass anthers and also occur in some dicots.
-- **Register / phase position:** the frame of the phased pattern (position modulo 21 or 24). Reads in the expected register support phasing; reads shifted by 1-2 nt are common (Dicer imprecision).
-- **Howell score / phasing score:** scores that measure how strongly reads concentrate in one register over a window, compared with chance. Phasis reports several versions (peak, strict, exact support).
-- ***PHAS*-like:** a locus with some phasing signal that fails one of Phasis's evidence checks. A weaker class, kept separately.
-- **Individual vs pooled runs:** individual runs call loci per library; pooled runs merge all libraries first, which finds weak loci but also adds dense 24-nt background.
+- **Register / phase position:** a series of expected read positions spaced by the phase length (21 or 24 nt). Reads at those positions support phasing. Reads 1 nt off are common; Phasis's main Howell score tolerates them, its strict score does not. Paired reads on the opposite strand sit at a fixed offset set by Dicer's 2-nt 3′ overhang, which Phasis also checks.
+- **Phasis score vs Howell score:** two different measures (Phasis `docs/scoring.md`). The **Phasis score** is statistical: -log10 of combined P values, capped at 300. The **Howell score** measures how regularly phase-length reads are spaced, from their abundance and the number of occupied phase cycles in a ten-cycle window. Phasis reports a main (1-nt tolerant) peak, a strict (exact positions only) peak and an exact-support score.
+- **Phased unit:** Phasis's term for a group of supported phased windows describing one local phasiRNA-producing region. A locus has a main unit and can have secondary units (overlapping alternative registers or separate local peaks). **HPSP** (highest phasing score position) is the anchor of the main unit.
+- ***PHAS*-like:** in Phasis, a candidate with evidence of phased structure but weaker or ambiguous support for a high-confidence call. Kept separately for follow-up and not added to the main calls table. Phasis decides the class per library, so one locus can be *PHAS* in one library and *PHAS*-like in another.
+- **Individual vs pooled runs:** Phasis analyses each library individually by default; pooled runs (`--pool_libraries`) combine all libraries into one virtual library first. Neither mode is guaranteed to find every locus the other finds. In our runs, pooling found weak loci but also added dense 24-nt background.
 - **hc-siRNA (heterochromatic siRNA):** abundant 24-nt siRNAs from transposons and repeats, guiding DNA methylation. They are not phased, but dense 24-nt clusters can produce chance phasing signal, the main source of false 24-*PHAS* calls.
 
 ## Structural RNAs
