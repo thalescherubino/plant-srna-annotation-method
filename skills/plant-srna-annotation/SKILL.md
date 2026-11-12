@@ -1,6 +1,6 @@
 ---
 name: plant-srna-annotation
-description: Plan, run, troubleshoot and interpret a genome-wide plant small-RNA (sRNA) annotation with the "Version 2" evidence-led workflow - sRNA-seq library sourcing (public GEO/SRA and in-house), trimming and QC, miRNA gene prediction from read evidence (ShortStack 4, miRador), miRNA scoring (miRScore), phased siRNAs and *PHAS* loci (Phasis), structural RNAs (tRNAscan-SE, Infernal/Rfam), and release. Use this skill whenever someone works on plant sRNA-seq, miRNAs, *MIR* genes, phasiRNAs, *PHAS* loci, hc-siRNAs, sRNA library selection or trimming, miRScore/Phasis/ShortStack/miRador runs or their outputs, or asks what such results mean, even if they do not name the workflow.
+description: Plan, run, troubleshoot and interpret a genome-wide plant small-RNA (sRNA) annotation with the "Version 2" evidence-led workflow - sRNA-seq library sourcing (public GEO/SRA and in-house), trimming and QC, miRNA gene prediction from read evidence (ShortStack 4, miRador), miRNA scoring (miRScore), phased siRNAs and PHAS loci (Phasis), structural RNAs (tRNAscan-SE, Infernal/Rfam), and release. Use this skill whenever someone works on plant sRNA-seq, miRNAs, MIR genes, phasiRNAs, PHAS loci, hc-siRNAs, sRNA library selection or trimming, miRScore/Phasis/ShortStack/miRador runs or their outputs, or asks what such results mean, even if they do not name the workflow.
 ---
 
 # Plant small-RNA annotation (Version 2 workflow)
