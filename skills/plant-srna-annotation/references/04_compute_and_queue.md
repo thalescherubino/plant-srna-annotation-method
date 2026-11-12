@@ -8,7 +8,7 @@ Each tool gets its own conda environment, defined in the repository's `envs/` fo
 
 | Environment | Tools |
 |---|---|
-| `plant-srna-phasis` | Phasis 2.8.4 (installed from its source checkout with the pip constraints file), HISAT2, samtools |
+| `plant-srna-phasis` | Phasis 2.8.x-2.9.x (installed from its source checkout with the pip constraints file; record the exact version and commit), HISAT2, samtools |
 | `plant-srna-shortstack` | ShortStack 4.1.2 |
 | `plant-srna-mirador` | miRador (Python 3.12 port), Bowtie 1, BLAST, EMBOSS, ViennaRNA |
 | `plant-srna-mirscore` | miRScore 0.3.7, Bowtie 1, samtools, ViennaRNA |
@@ -24,7 +24,7 @@ On a shared server:
 ## Choosing thread counts
 
 - Check the load first (`uptime`, `top`). `nproc` can report 1 when `OMP_NUM_THREADS=1`; use `getconf _NPROCESSORS_ONLN` for the real CPU count.
-- This project's budget: 32 cores per heavy job, one heavy job at a time. The 24-nt Phasis runs may use 64 when the server is under half load at the step's start.
+- Guideline: about 32 cores per 100 libraries for heavy steps, one heavy job at a time on a shared server. The 24-nt Phasis runs benefit from more cores (we used 64 when the server was under half load). These are guidelines, not requirements, and Phasis is being optimized, so expect them to change.
 - Phasis treats `-cores` as a ceiling: heavy stages use up to 70% of it, and many stages use far fewer.
 - Ask before running two heavy steps in parallel.
 
@@ -44,7 +44,7 @@ Queue order used for tomato (one 32-core job at a time):
 | 1 | exact-mapping QC | 0.3 h |
 | 2 | structural RNA scan | 6.8 h |
 | 3 | Phasis 21 nt, individual libraries (builds the shared index) | 4.3 h |
-| 4 | ShortStack de novo miRNA | 2.6 h |
+| 4 | ShortStack miRNA discovery | 2.6 h |
 | 5 | miRador | about 1 h (rice) |
 | 6 | Phasis 24 nt, individual | more than 28 h |
 | 7 | ShortStack with known miRNAs | 3.0 h |

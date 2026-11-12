@@ -8,7 +8,7 @@ Choose a versioned genome assembly; record accession, provider, release, checksu
 
 The scripts in [`scripts/libraries/`](../scripts/libraries/) implement the default library policy, adopted 2026-11-06:
 
-- **Cap and diversity:** at most 100 libraries per species, chosen to maximize organ and tissue diversity.
+- **Number and diversity:** at least 100 libraries per species where available, chosen to maximize organ and tissue diversity (guidance revised 2026-11-12: 100 is a minimum to aim for, not a cap; rice and tomato used exactly 100). In-house or unpublished libraries may be added from raw FASTQ through the same trimming and QC (`sra_to_tagcount.py --fastq`).
 - **Processed data only:** use processed GEO files (pre-filtered files are allowed but flagged). Never use count tables of miRNAs, genes or loci.
 - **Exclusions:**
   - obvious deleterious mutants, transgenics and sterile lines (non-deleterious near-isogenic, introgression and hybrid lines are allowed, ranked after wild type);

@@ -13,7 +13,7 @@ For each output: what one row is, the columns that matter, typical values, and w
 ## ShortStack `Results.txt`
 
 - **One row = one sRNA cluster.** `Locus`, `Reads`, `DistinctSequences`, `FracTop` (fraction of reads on the top strand), `Strand`, `MajorRNA` (most abundant sequence), counts per length (`21`…`24`), `DicerCall` (dominant size, or `N` when there is none), `MIRNA` (Y = called a *MIR* locus). The known-miRNA run adds `known_miRNAs`.
-- **Typical:** tomato about 51,800 clusters; 107 `MIRNA = Y` de novo, 120 with known miRNAs. Most clusters are 24-nt-dominant.
+- **Typical:** tomato about 51,800 clusters; 107 `MIRNA = Y` in the discovery run, 120 with known miRNAs. Most clusters are 24-nt-dominant.
 - **Doesn't show:** a `DicerCall` of 24 is not an hc-siRNA label, and `N` clusters may be degradation fragments. Both are reported, not used further, until reviewed.
 
 ## miRador `finalAnnotatedCandidates.csv`
@@ -59,10 +59,10 @@ Phasis explains these files in its README ("Understand the Outputs") and in `doc
 
 | `final_class` | `evidence_reason` | Plain meaning | Tomato 21 nt (rows) |
 |---|---|---|---|
-| PHAS | `pass` | passed the classifier and every exact-support check | 1,006 |
-| PHAS-like | `weak_exact_support` | some exact-register support, but little | 368 |
-| PHAS-like | `low_score_crowded_window_context` | modest main Howell score among many crowded competing windows | 244 |
-| PHAS-like | `weak_scaffold_alternative_context` | medium main Howell score, weak exact or strict support, and competing or ambiguous context | 10 |
+| *PHAS* | `pass` | passed the classifier and every exact-support check | 1,006 |
+| *PHAS*-like | `weak_exact_support` | some exact-register support, but little | 368 |
+| *PHAS*-like | `low_score_crowded_window_context` | modest main Howell score among many crowded competing windows | 244 |
+| *PHAS*-like | `weak_scaffold_alternative_context` | medium main Howell score, weak exact or strict support, and competing or ambiguous context | 10 |
 | non-PHAS | `classifier_non_phas` | rejected by Phasis's classifier | 35,229 |
 | non-PHAS | `insufficient_exact_support` | no exact-register support at all | 462 |
 

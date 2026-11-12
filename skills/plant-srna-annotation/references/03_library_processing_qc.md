@@ -11,12 +11,12 @@ One tag-count file per library (`SEQUENCE<TAB>COUNT`, DNA alphabet, no header, 1
 | Script | Use |
 |---|---|
 | `inspect_and_standardize_libraries.py` | GEO route: parse any layout, report depth, length profile, 5′ base, adapter traces; write a tag-count file only when counts are raw integers |
-| `sra_to_tagcount.py` | SRA route: download read 1, choose trimming from evidence, trim, keep 18-34 nt, collapse; JSON report with QC flags |
+| `sra_to_tagcount.py` | SRA and in-house route: download read 1 (`--runs`) or take local FASTQ (`--fastq`), choose trimming from evidence, trim, keep 18-34 nt, collapse; JSON report with QC flags |
 | `library_qc_summary.py` | one QC table for the whole selection, with review-only soft flags |
 | `freeze_library_set.py` | freeze the approved set: tag-count links, manifest with provenance, ShortStack condensed FASTA, miRador library links |
 | `qc/exact_mapping_qc.py`, `qc/plot_mapping_by_length.py` | read-weighted fraction of reads mapping exactly, overall and per length, per library and per cultivar group |
 
-## How trimming is chosen (SRA route)
+## How trimming is chosen (SRA and in-house route)
 
 Kits differ: 3′ adapter sequence, an extra fixed 5′ or 3′ base, random 4N ends, inline barcodes, UMIs, poly-A. Instead of trusting metadata, `sra_to_tagcount.py` **tests** options on a 100,000-read sample:
 

@@ -13,7 +13,7 @@ ShortStack finds sRNA clusters first and then asks whether a cluster looks like 
 ## ShortStack 4 (two runs)
 
 ```bash
-# de novo
+# discovery from the genome and reads only
 ShortStack --genomefile genome.fa --readfile shortstack_condensed/*.fa.gz \
   --dn_mirna --threads 32 --outdir results
 # guided by known miRNAs (species miRBase matures, DNA alphabet: U -> T)
@@ -22,11 +22,11 @@ ShortStack --genomefile genome.fa --readfile shortstack_condensed/*.fa.gz \
 ```
 
 - Use ShortStack **4.1.0 or newer** with the condensed FASTA made from the frozen tag counts.
-- `--dn_mirna` turns on de novo *MIR* discovery. **Never add `--nohp`**: it switches miRNA searching off.
+- `--dn_mirna` turns on *MIR* discovery from the reads (ShortStack calls this "de novo"; no database input is needed). **Never add `--nohp`**: it switches miRNA searching off.
 - ShortStack 4 has **no phasing analysis**. Its other clusters are reported (for example their overlap with Phasis *PHAS*-like loci) but are not used in later steps.
 - Main outputs: `Results.txt` / `Results.gff3` (one row per cluster, `MIRNA` = Y for *MIR* calls), `mir.fasta`, per-library BAM files, `Counts.txt`. See [09_outputs_and_interpretation.md](09_outputs_and_interpretation.md).
 
-Tomato: 107 *MIR* clusters de novo and 120 with known miRNAs, out of about 51,800 clusters.
+Tomato: 107 *MIR* clusters in the discovery run and 120 with known miRNAs, out of about 51,800 clusters.
 
 ## miRador
 

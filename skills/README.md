@@ -1,12 +1,13 @@
 # Skills
 
-AI-agent skills that package this method so that people without small-RNA experience can run it, understand the results and avoid known mistakes.
+AI-agent skills that package this method for bioinformaticians, biologists and AI agents: how to run it, how to read the results and how to avoid pitfalls.
 
 ## `plant-srna-annotation/` (prototype, 2026-11-11)
 
 ```
 plant-srna-annotation/
 ├── SKILL.md                         map of the workflow; read first
+├── assets/workflow.svg              workflow figure (vector; also describes itself in text)
 └── references/
     ├── glossary.md                  biology and jargon
     ├── 01_reference_genome.md

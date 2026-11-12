@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Select up to N small-RNA libraries for annotation, maximizing organ diversity.
+"""Select N small-RNA libraries for annotation (--max; 100 is the recommended minimum), maximizing organ diversity.
 
 Inputs: annotated GEO samples + format probe (see curate_geo_candidates.py, probe_geo_formats.py).
 Rules (2026-11-06 user decisions):
@@ -60,7 +60,9 @@ def main():
     ap.add_argument('--min-reads', type=float, default=1e6)
     ap.add_argument('--allow-special-lines', action='store_true',
                     help='keep non-deleterious special lines (NIL, introgression, F1) ranked after wild type')
-    ap.add_argument('--max', type=int, default=100)
+    ap.add_argument('--max', type=int, default=100,
+                    help='number of libraries to select. Guidance (2026-11-12): treat 100 as a minimum to aim for, not a '
+                         'cap; select more when diverse eligible libraries exist (compute grows with library count)')
     ap.add_argument('--per-series', type=int, default=12)
     ap.add_argument('--out-prefix', required=True)
     a = ap.parse_args()
@@ -208,6 +210,9 @@ def main():
 
     C = collections.Counter
     print(f'eligible={len(pool)} selected={len(chosen)} excluded={len(excluded)}')
+    if len(chosen) < 100:
+        print(f'WARNING: only {len(chosen)} libraries selected; at least 100 are recommended. Consider raw SRA '
+              'libraries or in-house libraries (sra_to_tagcount.py --fastq) to add tissues.')
     print('eligible by organ:', dict(C(r['organ'] for r in pool)))
     print('selected by organ:', dict(C(r['organ'] for r in chosen)))
     print('selected by subspecies:', dict(C(r['subspecies'] for r in chosen)))

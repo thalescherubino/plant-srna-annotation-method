@@ -28,6 +28,8 @@ Per experiment (SRX, one library; all its runs; read 1 only for paired runs):
 Writes <out>/<SRX>.tag, <out>/<SRX>.report.json and one TSV row of statistics (stdout or --stats-row).
 
 Usage: sra_to_tagcount.py --srx SRX... --runs SRR1;SRR2 --raw DIR --out DIR --index BOWTIE_INDEX [--threads 6]
+       sra_to_tagcount.py --srx MYLAB_LEAF1 --fastq /data/leaf1_R1.fastq.gz --raw DIR --out DIR --index ...
+                         (in-house/unpublished library: same detection, trimming and QC; added 2026-11-12)
        [--reuse-evaluation OLD_REPORT.json]  re-choose and re-trim from a saved detect/evaluation (same sample,
        deterministic) instead of re-scoring; used when the choice rule changes.
 Needs sra-tools, cutadapt, bowtie (1.x) and pigz on PATH (env plant-srna-reads).
@@ -87,6 +89,26 @@ def download(srx, runs, raw_dir, threads, tmp):
     for srr in runs:
         shutil.rmtree(os.path.join(tmp, srr), ignore_errors=True)
     return out, 'downloaded'
+
+
+def use_local_fastq(lib_id, fastqs, raw_dir, threads):
+    """In-house / unpublished libraries (added 2026-11-12): read-1 FASTQ file(s) given with --fastq are combined
+    into <raw>/<ID>.R1.fastq.gz exactly as a downloaded SRA library would be, so trimming and QC are identical."""
+    out = os.path.join(raw_dir, f'{lib_id}.R1.fastq.gz')
+    if os.path.exists(out) and os.path.getsize(out) > 0:
+        return out, 'existing'
+    tmp_out = out + '.tmp'
+    with open(tmp_out, 'wb') as fh:
+        for f in fastqs:
+            if not os.path.isfile(f):
+                raise FileNotFoundError(f)
+            dec = subprocess.Popen(['pigz', '-dc', '-p', '2', f] if f.endswith('.gz') else ['cat', f],
+                                   stdout=subprocess.PIPE)
+            run(['pigz', '-p', str(threads)], stdin=dec.stdout, stdout=fh)
+            if dec.wait() != 0:
+                raise RuntimeError(f'could not read {f}')
+    os.replace(tmp_out, out)
+    return out, 'local:' + ';'.join(os.path.abspath(f) for f in fastqs)
 
 
 def read_sample(fq, n, skip=20_000):
@@ -265,7 +287,9 @@ def stats_from_tag(tag):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--srx', required=True)
-    ap.add_argument('--runs', required=True, help="';'-separated run accessions")
+    ap.add_argument('--runs', default='', help="';'-separated SRA run accessions (SRA libraries)")
+    ap.add_argument('--fastq', default='', help="';'-separated local read-1 FASTQ files (.fastq or .fastq.gz) for an "
+                    "in-house or unpublished library; --srx is then the library ID. Use instead of --runs")
     ap.add_argument('--raw', required=True)
     ap.add_argument('--out', required=True)
     ap.add_argument('--index', required=True, help='Bowtie 1 genome index prefix')
@@ -273,12 +297,17 @@ def main():
     ap.add_argument('--tmp', default=None)
     ap.add_argument('--reuse-evaluation', default=None, help='report.json whose detect/evaluation are reused')
     a = ap.parse_args()
+    if bool(a.runs) == bool(a.fastq):
+        ap.error('give exactly one of --runs (SRA) or --fastq (in-house library)')
     os.makedirs(a.raw, exist_ok=True)
     os.makedirs(a.out, exist_ok=True)
     tmp = tempfile.mkdtemp(prefix=a.srx + '_', dir=a.tmp or a.out)
     rep = {'srx': a.srx, 'runs': a.runs}
     try:
-        fq, how = download(a.srx, [r for r in a.runs.split(';') if r], a.raw, a.threads, tmp)
+        if a.fastq:
+            fq, how = use_local_fastq(a.srx, [f for f in a.fastq.split(';') if f], a.raw, a.threads)
+        else:
+            fq, how = download(a.srx, [r for r in a.runs.split(';') if r], a.raw, a.threads, tmp)
         rep['raw_fastq'], rep['download'] = fq, how
         if a.reuse_evaluation:
             old = json.load(open(a.reuse_evaluation))

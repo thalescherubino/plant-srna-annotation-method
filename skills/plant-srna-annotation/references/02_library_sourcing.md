@@ -1,10 +1,10 @@
-# Step 2: Find and select public sRNA libraries (GEO and SRA)
+# Step 2: Find and select sRNA libraries (public GEO/SRA and in-house)
 
 [Back to the skill map](../SKILL.md) · Previous: [01_reference_genome.md](01_reference_genome.md) · Next: [03_library_processing_qc.md](03_library_processing_qc.md)
 
 ## Goal
 
-Up to 100 genuine small-RNA-seq libraries covering as many organs and tissues as possible, each with a recorded reason for being chosen, and every rejected sample listed with its reason.
+At least 100 genuine small-RNA-seq libraries, covering as many organs, tissues and conditions as possible. Record why each one was chosen, and list every rejected sample with its reason. 100 is a minimum to aim for, not a cap: use more when diverse libraries exist, keeping in mind that compute grows with library count. If fewer than 100 suitable libraries exist, record the gap and which tissues are missing.
 
 ## Scripts (repository `scripts/libraries/`)
 
@@ -14,7 +14,7 @@ Up to 100 genuine small-RNA-seq libraries covering as many organs and tissues as
 | | `curate_geo_candidates.py` | rule-based labels: cultivar, sRNA library yes/no, genotype class, organ, treatment |
 | | `probe_geo_formats.py` | reads the first 64 KB of each processed file and classifies its layout |
 | SRA route | `sra_inventory.py` | one row per SRA experiment (SRX), keeping the design text that names the kit |
-| both | `select_libraries.py` | applies the exclusions and picks up to N libraries round-robin across organs; writes an exclusion ledger |
+| both | `select_libraries.py` | applies the exclusions and picks `--max` libraries (default 100) round-robin across organs; warns when fewer than 100 are selected; writes an exclusion ledger |
 | both | `species_profiles.py` | species rules (`--species rice` or `tomato`); add a profile for a new species |
 
 ## GEO or SRA?
@@ -24,8 +24,17 @@ Up to 100 genuine small-RNA-seq libraries covering as many organs and tissues as
 
 ## Selection policy
 
-- **At most 100 libraries, maximum organ diversity.** Organs are picked round-robin so leaves do not crowd out roots and flowers. Untreated wild type ranks first; then non-deleterious lines (near-isogenic, introgression, hybrids) and treated samples.
+- **At least 100 libraries, maximum organ diversity.** Organs are picked round-robin so leaves do not crowd out roots and flowers. Untreated wild type ranks first; then non-deleterious lines (near-isogenic, introgression, hybrids) and treated samples.
 - **Genotype does not need to match the reference**, but costs reads under exact matching. Measure it (step 3) and record it per library.
+
+## In-house and unpublished libraries
+
+Libraries from your own lab can fill tissues or conditions that public data lack, and they often have the best metadata.
+
+- Start from the **raw read-1 FASTQ**, not from a previously trimmed or collapsed file, so the same trimming rules apply as for public libraries: `sra_to_tagcount.py --srx <LIBRARY_ID> --fastq <file1.fastq.gz>[;file2...]` ([03_library_processing_qc.md](03_library_processing_qc.md)).
+- Give each library a stable ID and add a row to the library inventory with the same columns as public ones: organ, genotype, treatment, kit, and a source of `in-house`.
+- Apply the same exclusion rules (small-RNA protocol only, no deleterious mutants unless that is the study's purpose).
+- Agree with the data owner on what can be shared. Unpublished libraries can be used for the annotation without releasing their reads; say so in the release.
 
 ## Pitfalls when sourcing public sRNA data
 
@@ -46,4 +55,4 @@ These all happened. Each now has an explicit rule in `select_libraries.py`.
 
 ## Hand-off to the next step
 
-Show the person running the project the selection summary: counts by organ, genotype group, treatment, study and kit; the exclusion ledger; and any manual overrides. **Get approval before processing**, and ask before swapping libraries later.
+Show the person leading the project the selection summary: counts by organ, genotype group, treatment, study, kit and source (public or in-house); the exclusion ledger; and any manual overrides. **Get approval before processing**, and ask before swapping libraries later.

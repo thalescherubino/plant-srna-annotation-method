@@ -12,7 +12,7 @@ One working copy of the genome FASTA that every tool uses, with its identity and
 2. **Simplify headers to the first token** (`>1 description...` → `>1`). Tools disagree on how they cut header lines; first-token names keep coordinates identical across all outputs. Keep a table of old → new names if anything changed.
 3. **Index it:** `samtools faidx` (needed by miRador, ShortStack, the miRScore input builder) and a Bowtie 1 index (needed by the exact-mapping QC and SRA trimming evaluation). Phasis and ShortStack build their own indexes.
 4. **Describe it** in the species record: number of sequences, total length, unplaced contigs, amount of `N`, upper/lower case (soft-masking), and whether chloroplast or mitochondrial contigs are present.
-5. **Identify the assembly** from evidence (exact chromosome lengths, naming), not from the file name. Example: the rice PlantCAD2 FASTA was identified as IRGSP-1.0 in MSU7 packaging from the exact length of Chr1 (43,270,923 bp).
+5. **Identify the assembly** from evidence (exact chromosome lengths, naming), not from the file name. Example: a rice genome FASTA supplied without release notes was identified as IRGSP-1.0 in MSU7 packaging from the exact length of Chr1 (43,270,923 bp).
 
 ## Why it matters
 

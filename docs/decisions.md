@@ -66,6 +66,15 @@ Decisions made while extending the method beyond maize B73v5. Each entry gives t
 | miRBase hairpins whose mature or star sits at a hairpin end, and that cannot be found exactly in the reference genome (so they cannot be extended), are **dropped** from the miRScore miRBase set together with their matures. Each is logged in `not_scorable.tsv` (`scripts/mirna/build_mirscore_inputs.py`). The remaining hairpins are scored as deposited. Tomato: 5 of 112 dropped (sly-MIR156b, 156c, 159, 162, 319a); BLAST shows 1–4 mismatches or a 1-nt gap against PlantCAD2 (156c has no strong hit). | miRScore needs a 3′ overhang to score a duplex, and it stops the whole run when a mature starts at hairpin position 1. These entries differ slightly from the reference assembly. The user preferred dropping and logging them over substituting the genome copy. |
 | If `hairpinHelper` writes no adjusted file (no `.1`/`.2` isoform matures, as in tomato), the original miRBase hairpins are used. | hairpinHelper only writes `miRScore_adjusted_hairpins.fa` when a hairpin needs new entries. |
 
+## 2026-11-12
+
+| Decision | Reason |
+|---|---|
+| Library number: **at least 100 per species** where available (a minimum to aim for, not a cap), maximizing organ and tissue diversity. `select_libraries.py --max` keeps default 100 and warns below 100. Rice and tomato used exactly 100. | User guidance while writing the skill. More libraries add tissue-specific evidence; compute grows with library count. |
+| **In-house or unpublished libraries** may be combined with public ones, starting from raw read-1 FASTQ through the same trimming and QC (`sra_to_tagcount.py --fastq`). | Fills tissues missing from public data; identical processing keeps libraries comparable. |
+| Compute guideline: about 32 cores per 100 libraries for heavy steps; Phasis documented as 2.8.x-2.9.x while it is being optimized (exact version and commit recorded per run). | Guidelines for other groups using the skill, not requirements. |
+| Skill: `skills/plant-srna-annotation/` (SKILL.md map, step guides, glossary, outputs guide, pitfalls, vector workflow figure). Internal links only; written for bioinformaticians, biologists and AI agents. | Sharing the method with the Cornell CoPAIR group. |
+
 ## Planned improvements (not yet implemented)
 
 | Topic | Plan |

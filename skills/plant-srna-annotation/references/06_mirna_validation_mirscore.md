@@ -48,7 +48,7 @@ Chunking does not change results: each hairpin is scored independently and Bowti
 
 | Set | Rice | Tomato |
 |---|---|---|
-| ShortStack de novo | 96/97 Pass | 106/107 Pass |
+| ShortStack (discovery run) | 96/97 Pass | 106/107 Pass |
 | miRador | 437/580 Pass (36 via rescue) | 343/481 Pass |
 | miRBase 23.1 | 276/516 Pass (179 only via rescue) | 107 scored after 5 dropped (running) |
 
