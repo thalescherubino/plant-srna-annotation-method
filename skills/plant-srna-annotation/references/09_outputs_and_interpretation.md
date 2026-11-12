@@ -43,16 +43,17 @@ For each output: what one row is, the columns that matter, typical values, and w
 
 ## Phasis tables (per phase, per run)
 
-- **`<P>_calls.tsv`, one row = one *PHAS* locus:** `identifier` (`chr:start..end`), `alib` (the library where it scored best), `phasis_score` (capped at 300), `Peak_Howell_score`, `Peak_Howell_score_strict`, `Howell_exact_support_score`, `Howell_origin_class`.
-  - Tomato 21-nt individual: 1,006 loci.
+- **`<P>_calls.tsv`, one row = one *PHAS* locus in one supporting library:** `identifier` (`chr:start..end`, the locus), `alib` (the library), `phasis_score` (capped at 300), `Peak_Howell_score`, `Peak_Howell_score_strict`, `Howell_exact_support_score`, `Howell_origin_class`. **Count distinct `identifier` values for loci**; the number of rows per locus is how many libraries support it.
+  - Tomato 21-nt individual: 1,006 rows = 87 loci (the GFF has 87 lines), supported by 96 libraries in total. 24-nt individual: 898 rows = 366 loci in 25 libraries. 21-nt pooled: 17 loci, broader (median 24 kb against 4 kb per library), because pooled reads chain neighbouring clusters together.
+  - The `Howell_origin_class` counts below are per row, not per locus.
   - `Howell_origin_class`: `coherent_extension` 769, `mixed_extension_and_ambiguity` 178, `unique_origin` 53, `ambiguous_origin` 6. This describes whether the phased signal grows coherently from one origin or competes with alternative registers.
 - **`<P>_classification_evidence.tsv`, one row = one scored cluster per library**, with `final_class` and `evidence_reason`.
-  - Tomato 21 nt: 35,691 non-*PHAS*, 1,006 *PHAS*, 622 *PHAS*-like.
+  - Tomato 21 nt (rows, i.e. cluster × library): 35,691 non-*PHAS*, 1,006 *PHAS*, 622 *PHAS*-like.
   - *PHAS*-like reasons: `insufficient_exact_support`, `weak_exact_support`, `low_score_crowded_window_context`, `weak_scaffold_alternative_context`.
 - **`<P>_phasiRNAs.tsv`, one row = one phasiRNA sequence at a locus:** `strand` (w = top/Watson, c = bottom/Crick), `observed_pos` vs `expected_register_pos`, `register_class` (`core_exact`, `core_offset`, `extended_exact`), `window_unit_role` (`main_hpsp`, `main_partner`, `overlapping_alternative`, `other_local_peak`), `abun`, `tag_seq`, `hits`.
   - Tomato 21 nt: 28,371 phasiRNA rows.
   - Sequences are stored reference-forward, as the read appears on the genome's top strand, also for minus-strand loci. Do not reverse-complement them again.
-- **`<P>_PHAS.gff`:** one line per locus with summary attributes (`complexity`, `strand_bias`, `ratio_abund_len_phase`).
+- **`<P>_PHAS.gff`:** one line per distinct locus (merged across libraries) with summary attributes (`complexity`, `strand_bias`, `ratio_abund_len_phase`).
 - **Howell score distributions:** compare pooled-only loci with loci also found per library before choosing any cut-off ([07_phas_phasis.md](07_phas_phasis.md)).
 - **Doesn't show:** a *PHAS* locus is not necessarily a protein-coding gene or a known *TAS* locus, and phasiRNAs are not shown to move or act.
 

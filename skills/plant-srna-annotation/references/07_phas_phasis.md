@@ -48,7 +48,7 @@ These are tool-level issues: report them to the Phasis developers, do not patch 
 | File | What it is |
 |---|---|
 | `<P>_PHAS.gff` | one feature per *PHAS* locus |
-| `<P>_calls.tsv` | one row per locus: coordinates, best library (`alib`), Phasis score, Howell scores |
+| `<P>_calls.tsv` | one row per locus **per supporting library** (`alib`): coordinates, Phasis score, Howell scores. Count distinct `identifier` values for loci |
 | `<P>_classification_evidence.tsv` | every scored cluster with its final class (PHAS / PHAS-like / non-PHAS) and the reason |
 | `<P>_phasiRNAs.tsv` | register-supported phasiRNAs per locus |
 | `<P>_all_clusters.tsv` | every candidate cluster with all features |
