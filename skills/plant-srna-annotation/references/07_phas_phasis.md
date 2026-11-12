@@ -6,6 +6,8 @@
 
 21-nt and 24-nt *PHAS* loci, each with the libraries that support it and the phasiRNAs Phasis assigns to its phased units, plus the separate, weaker *PHAS*-like class.
 
+A *PHAS* call has passed two stages: candidate detection (Phasis score, Howell score and locus features such as size-class ratio, strand bias and complexity) and register-resolved interpretation, which requires a coherent main phased unit with exact-register support at its anchor (Cherubino Ribeiro et al. 2026, bioRxiv). Phasis is built for plant Dicer-dependent phasiRNAs, not for any periodic sRNA signal.
+
 Phasis alone does the phasing analysis (ShortStack 4 has none). Published *PHAS* catalogs are not used as references; only loci called in the study are annotated.
 
 Phasis documents its own commands, outputs and scores in its README (sections "Understand the Outputs", "Use Your Own Data", "Manage Runs and Outputs") and in its `docs/` folder (`scoring.md`, `phasirna_output.md`, `advanced_usage.md`). Where this page and those documents seem to disagree, the Phasis documents win; report the difference.
@@ -88,7 +90,9 @@ Phasis can report more than one **phased unit** in one locus: a main unit (ancho
 
 ## Interpretation limits
 
-- A genomic interval rich in 21- or 24-nt reads is not a *PHAS* locus by that fact alone.
+- A genomic interval rich in 21- or 24-nt reads is not a *PHAS* locus by that fact alone. Apparent periodicity is not enough either: a *PHAS* locus needs the expected size class, a coherent register and support at several phased positions (Cherubino Ribeiro et al. 2026, bioRxiv).
+- Repeats can mimic phasing. In the Phasis paper, candidates in transposon- or repeat-rich regions, or carried by one dominant sequence without register-wide support, were rejected after review. Check such calls, especially pooled 24-nt calls, in the locus plot (`<P>_PHAS_locus_plots/`) and against the genome's repeat annotation.
 - Reads inside a *PHAS* interval are not automatically phasiRNAs. Only phase-length reads that Phasis assigns to a phased unit are exported, and even these include reads 1 nt off the expected position (`core_offset`).
-- The *PHAS* and *PHAS*-like labels are not experimental proof of how the sRNAs are made (Phasis README, "What are *PHAS* and *PHAS*-like loci?").
+- A known *PHAS* locus that is not called may simply lack its tissue or stage in the library set. Example: *AtTAS3b* and *AtTAS3c* were missed in bulk Arabidopsis seedling libraries, probably because miR390-*TAS3* activity is limited to lateral-root development. Conversely, almost no 24-*PHAS* signal is expected where the reproductive miR2275-DCL5 pathway is missing: the paper found none in Arabidopsis individual libraries and strong depletion in maize *dcl5* mutant anthers.
+- The *PHAS* and *PHAS*-like labels are not experimental proof of how the sRNAs are made (Phasis README, "What are *PHAS* and *PHAS*-like loci?"). Pathway evidence, such as loss of the signal in a *dcl5* or other mutant, is needed for that.
 - Phasing evidence says nothing about mobility, targets or function.
